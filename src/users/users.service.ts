@@ -11,6 +11,14 @@ export class UsersService {
     this.userRepository = userRepository;
   }
 
+  async findUserWithEmail(email: string): Promise<User[]> {
+    return await this.userRepository.find({ where: [{ email }] });
+  }
+
+  async findUserWithNickname(nickname: string): Promise<User[]> {
+    return await this.userRepository.find({ where: [{ nickname }] });
+  }
+
   async saveUser(user: User): Promise<void> {
     await this.userRepository.save(user);
   }
