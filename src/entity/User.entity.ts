@@ -25,10 +25,10 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: '' })
   profileUrl: string;
 
-  @Column()
+  @Column({ default: '' })
   introduction: string;
 
   @Column()
