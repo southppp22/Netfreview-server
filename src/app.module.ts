@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { VideosController } from './videos/videos.controller';
 import { VideosService } from './videos/videos.service';
 import { VideosModule } from './videos/videos.module';
-import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -35,7 +34,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     ReviewsModule,
   ],
-  controllers: [AppController, VideosController, UsersController],
+  controllers: [AppController, VideosController],
   providers: [AppService, VideosService],
 })
 export class AppModule {}
