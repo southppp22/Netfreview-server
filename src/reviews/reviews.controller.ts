@@ -3,14 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   Patch,
   Post,
   Query,
-  Res,
 } from '@nestjs/common';
-import { create } from 'domain';
 import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
@@ -26,6 +23,14 @@ export class ReviewsController {
     this.reviewsService = reviewsService;
     this.userService = userService;
     this.videosService = videosService;
+  }
+
+  @Post('like') // 한 유저가 어떤 비디오에 대해 좋아요를 누름
+  async likeThisReview(@Body() req) {
+    const userId = 1; // 나중에 토큰에서 값을 받아 올 예정
+    const user = await this.userService.findUserWithUserId(userId);
+    const review = await this.reviewsService.findReviewWithId(req.reviewId);
+    await this.reviewsService.addOrRemoveLike(user, review);
   }
 
   @Get(':videoId')

@@ -2,13 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Like } from './Like.entity';
+import { LikeReview } from './LikeReview.entity';
 import { User } from './User.entity';
 import { Video } from './Video.entity';
 
@@ -23,8 +22,8 @@ export class Review {
   @Column()
   text: string;
 
-  @OneToOne(() => Like, (like) => like.review)
-  like: Like;
+  @OneToOne(() => LikeReview, (like) => like.review)
+  likeReview: LikeReview;
 
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;
