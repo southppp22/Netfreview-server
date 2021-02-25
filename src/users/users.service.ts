@@ -11,16 +11,16 @@ export class UsersService {
     this.userRepository = userRepository;
   }
 
-  findUserWithUserId(userId: number) {
-    return this.userRepository.findOne({ where: [{ id: userId }] });
+  async findUserWithUserId(userId: number): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { id: userId } });
   }
 
-  async findUserWithEmail(email: string): Promise<User[]> {
-    return await this.userRepository.find({ where: [{ email }] });
+  async findUserWithEmail(email: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { email } });
   }
 
-  async findUserWithNickname(nickname: string): Promise<User[]> {
-    return await this.userRepository.find({ where: [{ nickname }] });
+  async findUserWithNickname(nickname: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { nickname } });
   }
 
   async saveUser(user: User): Promise<void> {
