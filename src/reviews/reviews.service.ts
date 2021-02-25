@@ -33,4 +33,8 @@ export class ReviewsService {
     // console.log(reviews);
     await this.reviewRepository.save(reviews);
   }
+
+  async deleteReview(id: number) {
+    await this.reviewRepository.delete({ id: id });
+  } 
 }

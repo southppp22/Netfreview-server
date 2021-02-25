@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
-import { Review } from 'src/entity/Review.entity';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
@@ -33,5 +32,10 @@ export class ReviewsController {
     const user = await this.userService.findUserWithUserId(req.userId);
     const video = await this.videosService.findVidWithId(req.videoId);
     await this.reviewsService.saveReview(user, video, req);
+  }
+
+  @Delete()
+  async deleteReview(@Body() req) {
+    await this.reviewsService.deleteReview(req.reviewId);
   }
 }
