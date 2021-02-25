@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
@@ -37,5 +45,12 @@ export class ReviewsController {
   @Delete()
   async deleteReview(@Body() req) {
     await this.reviewsService.deleteReview(req.reviewId);
+  }
+
+  @Patch()
+  async patchReview(@Body() req: ReviewDto): Promise<void> {
+    const user = await this.userService.findUserWithUserId(req.userId);
+    const video = await this.videosService.findVidWithId(req.videoId);
+    await this.reviewsService.patchReview(user, video, req);
   }
 }
