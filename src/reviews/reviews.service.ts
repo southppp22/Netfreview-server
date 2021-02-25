@@ -36,5 +36,20 @@ export class ReviewsService {
 
   async deleteReview(id: number) {
     await this.reviewRepository.delete({ id: id });
-  } 
+  }
+
+  async patchReview(user: User, video: Video, req: ReviewDto) {
+    const review = await this.reviewRepository.findOne({ user, video });
+    console.log(review);
+    await this.reviewRepository.save({
+      id: review.id,
+      text: req.text,
+      user: review.user,
+      video: review.video,
+    });
+    // review.text = req.text;
+    // review.rating = req.rating;
+    // review.user = user;
+    // review.video = video;
+  }
 }
