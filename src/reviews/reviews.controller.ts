@@ -3,10 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
+  Query,
+  Res,
 } from '@nestjs/common';
+import { create } from 'domain';
 import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
@@ -26,14 +30,24 @@ export class ReviewsController {
 
   @Get(':videoId')
   // eslint-disable-next-line @typescript-eslint/ban-types
-  async findThisVidReview(@Param('videoId') id: number): Promise<void> {
-    await this.reviewsService.findThisVidReview(id);
-  }
+  async findThisVidReview(
+    @Param('videoId') videoId: number,
+    @Query('page') page: number,
+  ): Promise<void> {
+    const user = await this.userService.findUserWithUserId(1); // token 구현 전까지 임의로 1 지정함
+    const video = await this.videosService.findVidWithId(videoId);
+    const {
+      videoList,
+      userReview,
+    } = await this.reviewsService.findThisVidAndUserReview(video, user);
 
-  // @Get(':userId')
-  // async findUserReview(@Param('userId') id: number): Promise<void> {
-  //   await this.reviewsService.findUserReview(id);
-  // }
+    console.log(videoList, userReview);
+    const sliceVideoList = videoList.slice(8 * (page - 1), 8 * page);
+    return Object.assign({
+      reviewList: sliceVideoList,
+      myReview: userReview,
+    });
+  }
 
   @Post()
   async saveReview(@Body() req: ReviewDto): Promise<void> {

@@ -19,8 +19,10 @@ export class ReviewsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  async findThisVidReview(id: number): Promise<any> {
-    await this.reviewRepository.find();
+  async findThisVidAndUserReview(video: Video, user: User) {
+    const videoList = await this.reviewRepository.find({ video });
+    const userReview = await this.reviewRepository.findOne({ video, user });
+    return { videoList, userReview };
   }
 
   async saveReview(user: User, video: Video, req: ReviewDto) {
@@ -29,8 +31,6 @@ export class ReviewsService {
     reviews.rating = req.rating;
     reviews.user = user;
     reviews.video = video;
-    console.log(reviews);
-    // console.log(reviews);
     await this.reviewRepository.save(reviews);
   }
 
