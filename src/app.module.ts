@@ -15,6 +15,9 @@ import { Type } from './entity/Type.entity';
 import { Genre } from './entity/Genre.entity';
 import { Like } from './entity/Like.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ReviewsController } from './reviews/reviews.controller';
+import { ReviewsService } from './reviews/reviews.service';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -34,7 +37,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     ReviewsModule,
   ],
-  controllers: [AppController, VideosController],
-  providers: [AppService, VideosService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
