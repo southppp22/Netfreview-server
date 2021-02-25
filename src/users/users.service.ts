@@ -11,6 +11,10 @@ export class UsersService {
     this.userRepository = userRepository;
   }
 
+  findUserWithUserId(userId: number) {
+    return this.userRepository.findOne({ where: [{ id: userId }] });
+  }
+
   async findUserWithEmail(email: string): Promise<User[]> {
     return await this.userRepository.find({ where: [{ email }] });
   }

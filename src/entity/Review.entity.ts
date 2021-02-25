@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -31,9 +32,9 @@ export class Review {
   @ManyToOne(() => Video, (video) => video.reviews)
   video: Video;
 
-  @CreateDateColumn()
-  createdAt: string;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: string;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 }
