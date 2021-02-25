@@ -2,16 +2,14 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Post,
   Request,
   Response,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
+import { TokenService } from 'src/auth/token.service';
 import { User } from 'src/entity/User.entity';
 import { UsersService } from './users.service';
 
@@ -19,10 +17,10 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(
     private usersService: UsersService,
-    private authService: AuthService,
+    private tokenService: TokenService,
   ) {
     this.usersService = usersService;
-    this.authService = authService;
+    this.tokenService = tokenService;
   }
 
   @UseGuards(LocalAuthGuard)
@@ -30,16 +28,30 @@ export class UsersController {
   async signIn(
     @Request() req,
     @Response({ passthrough: true }) res,
-  ): Promise<string | never> {
-    const { accessToken, refreshToken } = await this.authService.signIn(
-      req.user,
-    );
+  ): Promise<string> {
+    const { id } = req.user;
+    await this.usersService.updateLastLoginDate(id);
+    const accessToken = await this.tokenService.generateAccessToken(req.user);
+    const refreshToken = await this.tokenService.generateRefreshToken(req.user);
+
     res.cookie('refreshToken', refreshToken);
 
     return Object.assign({
       data: { accessToken },
-      statusCode: 201,
-      statusMsg: '로그인이 성공적으로 되었습니다.',
+      message: '로그인이 성공적으로 되었습니다.',
+    });
+  }
+
+  @Get('/refresh')
+  async refresh(@Request() req: any): Promise<any> {
+    const { refreshToken } = req.cookies;
+    const { token } = await this.tokenService.createAccessTokenFromRefreshToken(
+      refreshToken,
+    );
+
+    return Object.assign({
+      data: { accessToken: token },
+      message: 'success',
     });
   }
 
@@ -51,35 +63,9 @@ export class UsersController {
   }
 
   @Post('signUp')
-  async saveUser(@Body() user: User): Promise<string | never> {
-    const { email, nickname } = user;
-    let existedUser = await this.usersService.findUserWithEmail(email);
-
-    if (existedUser) {
-      throw new HttpException(
-        {
-          data: null,
-          statusCode: HttpStatus.CONFLICT,
-          statusMsg: '이미 존재하는 이메일입니다.',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    existedUser = await this.usersService.findUserWithNickname(nickname);
-
-    if (existedUser) {
-      throw new HttpException(
-        {
-          data: null,
-          statusCode: HttpStatus.CONFLICT,
-          statusMsg: '이미 존재하는 닉네임입니다.',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
+  async saveUser(@Body() user: User): Promise<string | void> {
     await this.usersService.saveUser(user);
+
     return Object.assign({
       data: null,
       statusCode: 201,

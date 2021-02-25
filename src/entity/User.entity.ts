@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Image } from './Image.entity';
 import { Like } from './Like.entity';
+import { RefreshToken } from './RefreshToken.entity';
 import { Review } from './Review.entity';
 
 @Entity()
@@ -25,14 +26,17 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: '' })
-  profileUrl: string;
+  @Column({ default: null })
+  profileUrl: string | null;
 
-  @Column({ default: '' })
-  introduction: string;
+  @Column({ default: null })
+  introduction: string | null;
 
   @Column()
   nickname: string;
+
+  @Column()
+  lastLoginDate: Date;
 
   @OneToOne(() => Image, (image) => image.user)
   image: Image;
@@ -40,12 +44,15 @@ export class User {
   @OneToOne(() => Like, (like) => like.user)
   like: Like;
 
+  @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshToken: RefreshToken;
+
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: string;
+  updatedAt: Date;
 }

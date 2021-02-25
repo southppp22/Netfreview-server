@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { compare, hash } from 'bcrypt';
 import { User } from 'src/entity/User.entity';
 import { Repository } from 'typeorm';
 
@@ -23,7 +24,35 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { nickname } });
   }
 
+  async validateCredentials(user: User, password: string): Promise<boolean> {
+    return compare(password, user.password);
+  }
+
+  async updateLastLoginDate(id: number): Promise<void> {
+    const user = await this.findUserWithUserId(id);
+    user.lastLoginDate = new Date();
+    this.userRepository.save(user);
+  }
+
   async saveUser(user: User): Promise<void> {
+    const { email, nickname } = user;
+
+    let existingUser = await this.findUserWithEmail(email);
+
+    if (existingUser) {
+      throw new UnprocessableEntityException('이미 존재하는 이메일입니다.');
+    }
+
+    existingUser = await this.findUserWithNickname(nickname);
+
+    if (existingUser) {
+      throw new UnprocessableEntityException('이미 존재하는 닉네임입니다.');
+    }
+
+    user.password = await hash(user.password, 10);
+
+    user.lastLoginDate = new Date();
+
     await this.userRepository.save(user);
   }
 }
