@@ -1,5 +1,6 @@
-import { Injectable, Res } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LikeReview } from 'src/entity/LikeReview.entity';
 import { Review } from 'src/entity/Review.entity';
 import { User } from 'src/entity/User.entity';
 import { Video } from 'src/entity/Video.entity';
@@ -10,12 +11,27 @@ import { ReviewDto } from './dto/postReviewDto';
 export class ReviewsService {
   constructor(
     @InjectRepository(Review) private reviewRepository: Repository<Review>,
+    @InjectRepository(LikeReview)
+    private likeRepository: Repository<LikeReview>,
   ) {
     this.reviewRepository = reviewRepository;
+    this.likeRepository = likeRepository;
   }
 
-  findAll(): Promise<Review[]> {
-    return this.reviewRepository.find();
+  async addOrRemoveLike(user: User, review: Review) {
+    const userLike = await this.likeRepository.findOne({ user, review });
+    if (userLike) {
+      await this.likeRepository.delete({ user, review });
+    } else {
+      const likeReview = new LikeReview();
+      likeReview.user = user;
+      likeReview.review = review;
+      await this.likeRepository.save(likeReview);
+    }
+  }
+
+  findReviewWithId(reviewId: number) {
+    return this.reviewRepository.findOne({ id: reviewId });
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

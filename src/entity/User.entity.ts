@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Image } from './Image.entity';
-import { Like } from './Like.entity';
+import { LikeReview } from './LikeReview.entity';
 import { Review } from './Review.entity';
 
 @Entity()
@@ -37,8 +37,8 @@ export class User {
   @OneToOne(() => Image, (image) => image.user)
   image: Image;
 
-  @OneToOne(() => Like, (like) => like.user)
-  like: Like;
+  @OneToOne(() => LikeReview, (like) => like.user)
+  likeReview: LikeReview;
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
