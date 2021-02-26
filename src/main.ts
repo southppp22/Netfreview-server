@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,6 +10,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PATCH,POST,DELETE,OPTIONS',
   };
   app.enableCors(options);
+  app.use(cookieParser());
   await app.listen(3000);
 }
 bootstrap();
