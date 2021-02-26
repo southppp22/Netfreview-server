@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Header,
+  Patch,
   Post,
   Request,
   Response,
@@ -71,7 +74,7 @@ export class UsersController {
     const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
     res.clearCookie('refreshToken');
 
-    await this.tokenService.destoryRefreshTokenFromUser(user);
+    await this.tokenService.deleteRefreshTokenFromUser(user);
     await this.usersService.updateLastLogin(user.id);
 
     return '로그아웃 되었습니다.';
@@ -82,5 +85,13 @@ export class UsersController {
     await this.usersService.saveUser(user);
 
     return '회원가입 되었습니다.';
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  async deleteUser(@Request() req): Promise<string> {
+    const { id } = req.user;
+    this.usersService.deleteUser(id);
+    return 'test';
   }
 }
