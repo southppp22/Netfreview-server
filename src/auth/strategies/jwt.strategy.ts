@@ -23,9 +23,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     const accessTokenIat = new Date(iat * 1000 + 1000);
-    const { lastLoginDate } = user;
+    const { lastLogin } = user;
 
-    if (accessTokenIat < lastLoginDate) {
+    if (accessTokenIat < lastLogin) {
       return null;
     }
 

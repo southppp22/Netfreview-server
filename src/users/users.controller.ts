@@ -30,7 +30,7 @@ export class UsersController {
     @Response({ passthrough: true }) res,
   ): Promise<string> {
     const { id } = req.user;
-    await this.usersService.updateLastLoginDate(id);
+    await this.usersService.updateLastLogin(id);
     const accessToken = await this.tokenService.generateAccessToken(req.user);
     const refreshToken = await this.tokenService.generateRefreshToken(req.user);
 

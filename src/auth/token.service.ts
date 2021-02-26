@@ -57,7 +57,7 @@ export class TokenService {
 
     const opts = {
       secret: jwtConstants.ACCESS_TOKEN_SECRET,
-      expiresIn: '15m',
+      expiresIn: '2h',
     };
     return this.jwtService.sign(payload, opts);
   }

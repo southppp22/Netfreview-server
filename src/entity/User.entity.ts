@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Image } from './Image.entity';
-import { Like } from './Like.entity';
+import { LikeReview } from './LikeReview.entity';
 import { RefreshToken } from './RefreshToken.entity';
 import { Review } from './Review.entity';
 
@@ -36,13 +36,13 @@ export class User {
   nickname: string;
 
   @Column()
-  lastLoginDate: Date;
+  lastLogin: Date;
 
   @OneToOne(() => Image, (image) => image.user)
   image: Image;
 
-  @OneToOne(() => Like, (like) => like.user)
-  like: Like;
+  @OneToOne(() => LikeReview, (like) => like.user)
+  likeReview: LikeReview;
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshToken: RefreshToken;

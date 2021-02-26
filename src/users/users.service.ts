@@ -28,9 +28,9 @@ export class UsersService {
     return compare(password, user.password);
   }
 
-  async updateLastLoginDate(id: number): Promise<void> {
+  async updateLastLogin(id: number): Promise<void> {
     const user = await this.findUserWithUserId(id);
-    user.lastLoginDate = new Date();
+    user.lastLogin = new Date();
     this.userRepository.save(user);
   }
 
@@ -51,7 +51,7 @@ export class UsersService {
 
     user.password = await hash(user.password, 10);
 
-    user.lastLoginDate = new Date();
+    user.lastLogin = new Date();
 
     await this.userRepository.save(user);
   }

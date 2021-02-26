@@ -3,15 +3,15 @@ import { Review } from './Review.entity';
 import { User } from './User.entity';
 
 @Entity()
-export class Like {
+export class LikeReview {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @OneToOne(() => Review, (review) => review.like)
+  @OneToOne(() => Review, (review) => review.likeReview)
   @JoinColumn()
   review: Review;
 
-  @OneToOne(() => User, (user) => user.like)
+  @OneToOne(() => User, (user) => user.likeReview)
   @JoinColumn()
   user: User;
 }

@@ -3,9 +3,7 @@ import { VideosService } from './videos.service';
 
 @Controller('videos')
 export class VideosController {
-  constructor(
-    private videosService: VideosService,
-  ) {
+  constructor(private videosService: VideosService) {
     this.videosService = videosService;
   }
 }
