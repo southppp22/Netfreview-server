@@ -7,7 +7,7 @@ export class LikeReview {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @OneToOne(() => Review, (review) => review.likeReview)
+  @OneToOne(() => Review, (review) => review.likeReview, { cascade: true })
   @JoinColumn()
   review: Review;
 

@@ -3,11 +3,16 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
   Query,
+  UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { TokenService } from 'src/auth/token.service';
 import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
@@ -19,34 +24,53 @@ export class ReviewsController {
     private reviewsService: ReviewsService,
     private userService: UsersService,
     private videosService: VideosService,
+    private tokenService: TokenService,
   ) {
     this.reviewsService = reviewsService;
     this.userService = userService;
     this.videosService = videosService;
+    this.tokenService = tokenService;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('like') // 한 유저가 어떤 비디오에 대해 좋아요를 누름
-  async likeThisReview(@Body() req) {
-    const userId = 1; // 나중에 토큰에서 값을 받아 올 예정
-    const user = await this.userService.findUserWithUserId(userId);
+  async likeThisReview(@Body() req, @Headers() header) {
+    const cookie = header.cookie.slice(13);
+    const { user } = await this.tokenService.resolveRefreshToken(cookie);
     const review = await this.reviewsService.findReviewWithId(req.reviewId);
-    await this.reviewsService.addOrRemoveLike(user, review);
+    console.log(req);
+    return await this.reviewsService.addOrRemoveLike(user, review);
   }
 
   @Get(':videoId')
-  // eslint-disable-next-line @typescript-eslint/ban-types
   async findThisVidReview(
     @Param('videoId') videoId: number,
     @Query('page') page: number,
+    @Headers() header,
   ): Promise<void> {
-    const user = await this.userService.findUserWithUserId(1); // token 구현 전까지 임의로 1 지정함
+    const cookie = header.cookie.slice(13);
+    const accessToken = header.authorization;
     const video = await this.videosService.findVidWithId(videoId);
+
+    let myuser;
+    if (!accessToken) {
+      myuser = 'guest';
+    } else {
+      const { user } = await this.tokenService.resolveRefreshToken(cookie);
+      myuser = user;
+    }
+
     const {
       videoList,
       userReview,
-    } = await this.reviewsService.findThisVidAndUserReview(video, user);
+    } = await this.reviewsService.findThisVidAndUserReview(video, myuser);
 
-    console.log(videoList, userReview);
+    if (videoList === null) {
+      throw new UnprocessableEntityException(
+        '아직 이 비디오에 등록 된 리뷰가 없습니다!',
+      );
+    }
+
     const sliceVideoList = videoList.slice(8 * (page - 1), 8 * page);
     return Object.assign({
       reviewList: sliceVideoList,
@@ -54,21 +78,26 @@ export class ReviewsController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async saveReview(@Body() req: ReviewDto): Promise<void> {
-    const user = await this.userService.findUserWithUserId(req.userId);
+  async saveReview(@Body() req: ReviewDto, @Headers() header): Promise<void> {
+    const cookie = header.cookie.slice(13);
+    const { user } = await this.tokenService.resolveRefreshToken(cookie);
     const video = await this.videosService.findVidWithId(req.videoId);
-    await this.reviewsService.saveReview(user, video, req);
+    return await this.reviewsService.saveReview(user, video, req);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete()
   async deleteReview(@Body() req) {
     await this.reviewsService.deleteReview(req.reviewId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch()
-  async patchReview(@Body() req: ReviewDto): Promise<void> {
-    const user = await this.userService.findUserWithUserId(req.userId);
+  async patchReview(@Body() req: ReviewDto, @Headers() header): Promise<void> {
+    const cookie = header.cookie.slice(13);
+    const { user } = await this.tokenService.resolveRefreshToken(cookie);
     const video = await this.videosService.findVidWithId(req.videoId);
     await this.reviewsService.patchReview(user, video, req);
   }
