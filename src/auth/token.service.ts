@@ -144,7 +144,7 @@ export class TokenService {
     return this.findTokenById(Number(tokenId));
   }
 
-  async destoryRefreshTokenFromUser(user: User): Promise<any> {
+  async deleteRefreshTokenFromUser(user: User): Promise<any> {
     return await this.refreshRepository
       .createQueryBuilder('refreshToken')
       .leftJoinAndSelect('refreshToken.user', 'user')
