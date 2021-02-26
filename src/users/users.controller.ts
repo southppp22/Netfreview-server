@@ -43,7 +43,7 @@ export class UsersController {
   }
 
   @Get('/refresh')
-  async refresh(@Request() req: any): Promise<any> {
+  async refresh(@Request() req: any): Promise<string> {
     const { refreshToken } = req.cookies;
     const { token } = await this.tokenService.createAccessTokenFromRefreshToken(
       refreshToken,
@@ -62,14 +62,25 @@ export class UsersController {
     return req.user;
   }
 
-  @Post('signUp')
-  async saveUser(@Body() user: User): Promise<string | void> {
+  @Post('signout')
+  async signOut(
+    @Request() req,
+    @Response({ passthrough: true }) res,
+  ): Promise<string> {
+    const { refreshToken } = req.cookies;
+    const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
+    res.clearCookie('refreshToken');
+
+    await this.tokenService.destoryRefreshTokenFromUser(user);
+    await this.usersService.updateLastLogin(user.id);
+
+    return '로그아웃 되었습니다.';
+  }
+
+  @Post('signup')
+  async saveUser(@Body() user: User): Promise<string> {
     await this.usersService.saveUser(user);
 
-    return Object.assign({
-      data: null,
-      statusCode: 201,
-      statusMsg: 'saved successfully',
-    });
+    return '회원가입 되었습니다.';
   }
 }
