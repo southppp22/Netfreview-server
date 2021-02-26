@@ -143,4 +143,13 @@ export class TokenService {
     }
     return this.findTokenById(Number(tokenId));
   }
+
+  async destoryRefreshTokenFromUser(user: User): Promise<any> {
+    return await this.refreshRepository
+      .createQueryBuilder('refreshToken')
+      .leftJoinAndSelect('refreshToken.user', 'user')
+      .delete()
+      .where('user.id = :id', { id: user.id })
+      .execute();
+  }
 }
