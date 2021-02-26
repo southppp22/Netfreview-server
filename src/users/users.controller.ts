@@ -92,6 +92,6 @@ export class UsersController {
   async deleteUser(@Request() req): Promise<string> {
     const { id } = req.user;
     this.usersService.deleteUser(id);
-    return 'test';
+    return '회원탈퇴 되었습니다.';
   }
 }
