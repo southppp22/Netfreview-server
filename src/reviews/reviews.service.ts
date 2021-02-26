@@ -103,7 +103,6 @@ export class ReviewsService {
 
   async patchReview(user: User, video: Video, req: ReviewDto) {
     const review = await this.reviewRepository.findOne({ user, video });
-    console.log(review);
     await this.reviewRepository.save({
       id: review.id,
       text: req.text,

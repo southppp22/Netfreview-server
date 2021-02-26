@@ -23,7 +23,7 @@ export class Review {
   @Column()
   text: string;
 
-  @OneToOne(() => LikeReview, (like) => like.review)
+  @OneToOne(() => LikeReview, (like) => like.review, { cascade: true })
   likeReview: LikeReview;
 
   @ManyToOne(() => User, (user) => user.reviews)

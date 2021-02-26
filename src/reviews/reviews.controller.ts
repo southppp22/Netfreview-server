@@ -1,19 +1,20 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Headers,
+  NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  Request,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { TokenService } from 'src/auth/token.service';
-import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
 import { ReviewsService } from './reviews.service';
@@ -22,23 +23,20 @@ import { ReviewsService } from './reviews.service';
 export class ReviewsController {
   constructor(
     private reviewsService: ReviewsService,
-    private userService: UsersService,
     private videosService: VideosService,
-    private tokenService: TokenService,
   ) {
     this.reviewsService = reviewsService;
-    this.userService = userService;
     this.videosService = videosService;
-    this.tokenService = tokenService;
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('like') // 한 유저가 어떤 비디오에 대해 좋아요를 누름
-  async likeThisReview(@Body() req, @Headers() header) {
-    const cookie = header.cookie.slice(13);
-    const { user } = await this.tokenService.resolveRefreshToken(cookie);
-    const review = await this.reviewsService.findReviewWithId(req.reviewId);
-    console.log(req);
+  async likeThisReview(@Body() body, @Request() req) {
+    const user = req.user;
+    const review = await this.reviewsService.findReviewWithId(body.reviewId);
+    if (!review) {
+      throw new NotFoundException('존재하지 않는 리뷰입니다.');
+    }
     return await this.reviewsService.addOrRemoveLike(user, review);
   }
 
@@ -47,8 +45,8 @@ export class ReviewsController {
     @Param('videoId') videoId: number,
     @Query('page') page: number,
     @Headers() header,
+    @Request() req,
   ): Promise<void> {
-    const cookie = header.cookie.slice(13);
     const accessToken = header.authorization;
     const video = await this.videosService.findVidWithId(videoId);
 
@@ -56,8 +54,7 @@ export class ReviewsController {
     if (!accessToken) {
       myuser = 'guest';
     } else {
-      const { user } = await this.tokenService.resolveRefreshToken(cookie);
-      myuser = user;
+      myuser = req.user;
     }
 
     const {
@@ -80,25 +77,28 @@ export class ReviewsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async saveReview(@Body() req: ReviewDto, @Headers() header): Promise<void> {
-    const cookie = header.cookie.slice(13);
-    const { user } = await this.tokenService.resolveRefreshToken(cookie);
-    const video = await this.videosService.findVidWithId(req.videoId);
-    return await this.reviewsService.saveReview(user, video, req);
+  async saveReview(@Body() body: ReviewDto, @Request() request): Promise<void> {
+    const user = request.user;
+    if (!body.videoId || !body.text || !body.rating) {
+      throw new BadRequestException(
+        'text 혹은 rating 혹은 videoId가 전달되지 않았습니다.',
+      );
+    }
+    const video = await this.videosService.findVidWithId(body.videoId);
+    return await this.reviewsService.saveReview(user, video, body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete()
-  async deleteReview(@Body() req) {
-    await this.reviewsService.deleteReview(req.reviewId);
+  async deleteReview(@Body() body) {
+    await this.reviewsService.deleteReview(body.reviewId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch()
-  async patchReview(@Body() req: ReviewDto, @Headers() header): Promise<void> {
-    const cookie = header.cookie.slice(13);
-    const { user } = await this.tokenService.resolveRefreshToken(cookie);
-    const video = await this.videosService.findVidWithId(req.videoId);
-    await this.reviewsService.patchReview(user, video, req);
+  async patchReview(@Body() body: ReviewDto, @Request() req): Promise<void> {
+    const user = req.user;
+    const video = await this.videosService.findVidWithId(body.videoId);
+    await this.reviewsService.patchReview(user, video, body);
   }
 }
