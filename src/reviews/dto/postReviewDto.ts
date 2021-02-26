@@ -1,5 +1,4 @@
 export class ReviewDto {
-  userId: number;
   text: string;
   videoId: number;
   rating: number;

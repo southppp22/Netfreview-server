@@ -1,14 +1,20 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  Headers,
+  NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  Request,
+  UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
 import { ReviewsService } from './reviews.service';
@@ -17,36 +23,51 @@ import { ReviewsService } from './reviews.service';
 export class ReviewsController {
   constructor(
     private reviewsService: ReviewsService,
-    private userService: UsersService,
     private videosService: VideosService,
   ) {
     this.reviewsService = reviewsService;
-    this.userService = userService;
     this.videosService = videosService;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('like') // 한 유저가 어떤 비디오에 대해 좋아요를 누름
-  async likeThisReview(@Body() req) {
-    const userId = 1; // 나중에 토큰에서 값을 받아 올 예정
-    const user = await this.userService.findUserWithUserId(userId);
-    const review = await this.reviewsService.findReviewWithId(req.reviewId);
-    await this.reviewsService.addOrRemoveLike(user, review);
+  async likeThisReview(@Body() body, @Request() req) {
+    const user = req.user;
+    const review = await this.reviewsService.findReviewWithId(body.reviewId);
+    if (!review) {
+      throw new NotFoundException('존재하지 않는 리뷰입니다.');
+    }
+    return await this.reviewsService.addOrRemoveLike(user, review);
   }
 
   @Get(':videoId')
-  // eslint-disable-next-line @typescript-eslint/ban-types
   async findThisVidReview(
     @Param('videoId') videoId: number,
     @Query('page') page: number,
+    @Headers() header,
+    @Request() req,
   ): Promise<void> {
-    const user = await this.userService.findUserWithUserId(1); // token 구현 전까지 임의로 1 지정함
+    const accessToken = header.authorization;
     const video = await this.videosService.findVidWithId(videoId);
+
+    let myuser;
+    if (!accessToken) {
+      myuser = 'guest';
+    } else {
+      myuser = req.user;
+    }
+
     const {
       videoList,
       userReview,
-    } = await this.reviewsService.findThisVidAndUserReview(video, user);
+    } = await this.reviewsService.findThisVidAndUserReview(video, myuser);
 
-    console.log(videoList, userReview);
+    if (videoList === null) {
+      throw new UnprocessableEntityException(
+        '아직 이 비디오에 등록 된 리뷰가 없습니다!',
+      );
+    }
+
     const sliceVideoList = videoList.slice(8 * (page - 1), 8 * page);
     return Object.assign({
       reviewList: sliceVideoList,
@@ -54,22 +75,30 @@ export class ReviewsController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async saveReview(@Body() req: ReviewDto): Promise<void> {
-    const user = await this.userService.findUserWithUserId(req.userId);
-    const video = await this.videosService.findVidWithId(req.videoId);
-    await this.reviewsService.saveReview(user, video, req);
+  async saveReview(@Body() body: ReviewDto, @Request() request): Promise<void> {
+    const user = request.user;
+    if (!body.videoId || !body.text || !body.rating) {
+      throw new BadRequestException(
+        'text 혹은 rating 혹은 videoId가 전달되지 않았습니다.',
+      );
+    }
+    const video = await this.videosService.findVidWithId(body.videoId);
+    return await this.reviewsService.saveReview(user, video, body);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete()
-  async deleteReview(@Body() req) {
-    await this.reviewsService.deleteReview(req.reviewId);
+  async deleteReview(@Body() body) {
+    await this.reviewsService.deleteReview(body.reviewId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch()
-  async patchReview(@Body() req: ReviewDto): Promise<void> {
-    const user = await this.userService.findUserWithUserId(req.userId);
-    const video = await this.videosService.findVidWithId(req.videoId);
-    await this.reviewsService.patchReview(user, video, req);
+  async patchReview(@Body() body: ReviewDto, @Request() req): Promise<void> {
+    const user = req.user;
+    const video = await this.videosService.findVidWithId(body.videoId);
+    await this.reviewsService.patchReview(user, video, body);
   }
 }

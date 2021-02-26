@@ -7,11 +7,13 @@ export class LikeReview {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @OneToOne(() => Review, (review) => review.likeReview)
+  @OneToOne(() => Review, (review) => review.likeReview, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   review: Review;
 
-  @OneToOne(() => User, (user) => user.likeReview)
+  @OneToOne(() => User, (user) => user.likeReview, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 }
