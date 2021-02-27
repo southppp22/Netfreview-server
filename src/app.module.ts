@@ -14,6 +14,8 @@ import { Genre } from './entity/Genre.entity';
 import { LikeReview } from './entity/LikeReview.entity';
 import { ConfigModule } from '@nestjs/config';
 import { RefreshToken } from './entity/RefreshToken.entity';
+import { ImageController } from './image/image.controller';
+import { ImageService } from './image/image.service';
 
 @Module({
   imports: [
@@ -41,8 +43,9 @@ import { RefreshToken } from './entity/RefreshToken.entity';
     VideosModule,
     UsersModule,
     ReviewsModule,
+    ConfigModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ImageController],
+  providers: [AppService, ImageService],
 })
 export class AppModule {}
