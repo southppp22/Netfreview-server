@@ -9,7 +9,6 @@ import { Review } from './entity/Review.entity';
 import { User } from './entity/User.entity';
 import { Video } from './entity/Video.entity';
 import { Image } from './entity/Image.entity';
-import { Type } from './entity/Type.entity';
 import { Genre } from './entity/Genre.entity';
 import { LikeReview } from './entity/LikeReview.entity';
 import { ConfigModule } from '@nestjs/config';
@@ -26,16 +25,7 @@ import { RefreshToken } from './entity/RefreshToken.entity';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE,
       autoLoadEntities: true,
-      entities: [
-        Review,
-        User,
-        Video,
-        Image,
-        Type,
-        Genre,
-        LikeReview,
-        RefreshToken,
-      ],
+      entities: [Review, User, Video, Image, Genre, LikeReview, RefreshToken],
       synchronize: true,
     }),
     VideosModule,

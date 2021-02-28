@@ -11,7 +11,7 @@ export class VideosService {
     this.videoRepository = videoRepository;
   }
 
-  findVidWithId(videoId: number) {
-    return this.videoRepository.findOne({ where: [{ id: videoId }] });
+  async findVidWithId(videoId: number) {
+    return await this.videoRepository.findOne({ id: videoId });
   }
 }
