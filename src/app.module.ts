@@ -13,6 +13,8 @@ import { Genre } from './entity/Genre.entity';
 import { LikeReview } from './entity/LikeReview.entity';
 import { ConfigModule } from '@nestjs/config';
 import { RefreshToken } from './entity/RefreshToken.entity';
+import { ImageController } from './image/image.controller';
+import { ImageService } from './image/image.service';
 
 @Module({
   imports: [
@@ -26,13 +28,14 @@ import { RefreshToken } from './entity/RefreshToken.entity';
       database: process.env.DATABASE,
       autoLoadEntities: true,
       entities: [Review, User, Video, Image, Genre, LikeReview, RefreshToken],
-      synchronize: true,
+      synchronize: true, // 배포 시 설정?
     }),
     VideosModule,
     UsersModule,
     ReviewsModule,
+    ConfigModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ImageController],
+  providers: [AppService, ImageService],
 })
 export class AppModule {}

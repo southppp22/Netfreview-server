@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Patch,
   Post,
   Request,
@@ -61,7 +60,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard) //test
   @Get('profile')
   getProfile(@Request() req) {
-    console.log('controller');
     return req.user;
   }
 
@@ -92,6 +90,14 @@ export class UsersController {
   async deleteUser(@Request() req): Promise<string> {
     const { id } = req.user;
     this.usersService.deleteUser(id);
-    return 'test';
+    return '회원탈퇴 되었습니다.';
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  async updateUserInfo(@Request() req, @Body() payload): Promise<string> {
+    const { user } = req;
+    await this.usersService.updateUserInfo(user, payload);
+    return '회원정보가 수정되었습니다.';
   }
 }

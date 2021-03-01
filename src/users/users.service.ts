@@ -1,8 +1,13 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
 import { User } from 'src/entity/User.entity';
 import { Repository } from 'typeorm';
+import { UpdateUserInfoDto } from './dto/UpdateUserInfoDto';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +31,10 @@ export class UsersService {
 
   async validateCredentials(user: User, password: string): Promise<boolean> {
     return compare(password, user.password);
+  }
+
+  async findUserWithName(name: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { name } });
   }
 
   async updateLastLogin(id: number): Promise<void> {
@@ -54,5 +63,14 @@ export class UsersService {
 
   async deleteUser(id: number): Promise<void> {
     await this.userRepository.delete({ id });
+  }
+
+  async updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<void> {
+    if (Object.keys(dto).length !== 1) {
+      throw new BadRequestException('요청이 올바르지 않습니다.');
+    }
+    const [[column, data]] = Object.entries(dto);
+    user[column] = data;
+    await this.userRepository.save(user);
   }
 }
