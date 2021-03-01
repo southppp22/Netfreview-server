@@ -1,13 +1,10 @@
 import { Genre } from '../Genre.entity';
 import { Video } from '../Video.entity';
+import { Factory, define } from 'typeorm-seeding';
 
-declare const define: any;
-declare const factory: any;
-
-define(Genre, (faker: typeof fakerStatic) => {
-  const name = faker.random.word();
+define(Genre, (faker: typeof fakerStatic, factory: Factory) => {
   const genre = new Genre();
-  genre.name = name;
+  genre.name = 'genre';
   genre.videos = factory(Video)() as any;
   return genre;
 });

@@ -20,7 +20,6 @@ export class VideosService {
   }
 
   async addThisVideo(newVideo: VideoDto) {
-    const videoBox = [];
     const genreBox = [];
 
     const video = new Video();
@@ -42,36 +41,51 @@ export class VideosService {
 
       if (!isGenre) {
         const newGenre = new Genre();
-        genreBox.push(newGenre);
         newGenre.name = genre;
-        newGenre.videos = [video];
         await this.genreRepository.save(newGenre);
-      } else {
-        const rawVideos = await this.videoRepository
-          .createQueryBuilder('video')
-          .leftJoinAndSelect('video.genres', 'genre')
-          .getMany();
-
-        for (const video of rawVideos) {
-          let isInGenre = false;
-          for (const rawGenre of video.genres) {
-            if (rawGenre.name === genre) {
-              isInGenre = true;
-            }
-          }
-          if (isInGenre) {
-            videoBox.push(video);
-          }
-        }
-
-        const newGenre = new Genre();
-        newGenre.name = isGenre.name;
-        newGenre.videos = videoBox;
         genreBox.push(newGenre);
-        await this.genreRepository.save(newGenre);
+      } else {
+        genreBox.push(isGenre);
       }
+      await this.videoRepository.save(video);
     }
-
-    await this.videoRepository.save(video);
   }
 }
+//   for (const genre of newVideo.genres) {
+//     const isGenre = await this.genreRepository.findOne({ name: genre });
+
+//     if (!isGenre) {
+//       const newGenre = new Genre();
+//       genreBox.push(newGenre);
+//       videoBox.push(video);
+//       newGenre.name = genre;
+//       newGenre.videos = videoBox;
+//       await this.genreRepository.save(newGenre);
+//     } else {
+//       const rawVideos = await this.videoRepository
+//         .createQueryBuilder('video')
+//         .leftJoinAndSelect('video.genres', 'genre')
+//         .getMany();
+
+//       for (const video of rawVideos) {
+//         let isInGenre = false;
+//         for (const rawGenre of video.genres) {
+//           if (rawGenre.name === genre) {
+//             isInGenre = true;
+//           }
+//         }
+//         if (isInGenre) {
+//           videoBox.push(video);
+//         }
+//       }
+
+//       const newGenre = new Genre();
+//       newGenre.name = isGenre.name;
+//       newGenre.videos = videoBox;
+//       genreBox.push(newGenre);
+//       await this.genreRepository.save(newGenre);
+//     }
+//   }
+
+//   await this.videoRepository.save(video);
+// }

@@ -2,7 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,7 +17,8 @@ export class Genre {
   @Column()
   name: string;
 
-  @ManyToMany(() => Video, (video) => video.genres)
+  @ManyToMany(() => Video, (video) => video.genres, { onDelete: 'CASCADE' })
+  @JoinTable({ name: 'video_genre' })
   videos: Video[];
 
   @CreateDateColumn()
