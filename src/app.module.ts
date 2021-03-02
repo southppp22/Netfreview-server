@@ -15,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RefreshToken } from './entity/RefreshToken.entity';
 import { ImageController } from './image/image.controller';
 import { ImageService } from './image/image.service';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { ImageService } from './image/image.service';
     UsersModule,
     ReviewsModule,
     ConfigModule,
+    ImageModule,
   ],
-  controllers: [AppController, ImageController],
-  providers: [AppService, ImageService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
