@@ -42,7 +42,6 @@ export class AuthService {
 
     if (!user) {
       const newUser = new User();
-      // newUser.id = Number(id)
       newUser.id = id;
       newUser.email = `${email}[AUTH]`;
       newUser.name = name;

@@ -45,7 +45,7 @@ export class UsersController {
     });
   }
 
-  @Get('/refresh')
+  @Get('refresh')
   async refresh(@Request() req: any): Promise<string> {
     const { refreshToken } = req.cookies;
     const { token } = await this.tokenService.createAccessTokenFromRefreshToken(
@@ -58,8 +58,8 @@ export class UsersController {
     });
   }
 
-  @UseGuards(JwtAuthGuard) //test
-  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @Get('userinfo')
   getProfile(@Request() req) {
     return req.user;
   }
