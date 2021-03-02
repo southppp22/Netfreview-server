@@ -17,7 +17,7 @@ export class UsersService {
     this.userRepository = userRepository;
   }
 
-  async findUserWithUserId(userId: number): Promise<User | undefined> {
+  async findUserWithUserId(userId: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ where: { id: userId } });
   }
 
@@ -37,7 +37,7 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { name } });
   }
 
-  async updateLastLogin(id: number): Promise<void> {
+  async updateLastLogin(id: string): Promise<void> {
     const user = await this.findUserWithUserId(id);
     user.lastLogin = new Date();
     this.userRepository.save(user);
@@ -66,7 +66,7 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  async deleteUser(id: number): Promise<void> {
+  async deleteUser(id: string): Promise<void> {
     await this.userRepository.delete({ id });
   }
 
@@ -77,5 +77,15 @@ export class UsersService {
     const [[column, data]] = Object.entries(dto);
     user[column] = data;
     await this.userRepository.save(user);
+  }
+
+  async generateRandomNickname(): Promise<string> {
+    let nickname = `user${Math.random().toString(36)}`;
+    let isExist = await this.findUserWithNickname(nickname);
+    while (isExist) {
+      nickname = `user${Math.random().toString(36)}`;
+      isExist = await this.findUserWithNickname(nickname);
+    }
+    return nickname;
   }
 }

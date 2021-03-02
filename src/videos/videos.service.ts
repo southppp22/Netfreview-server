@@ -70,7 +70,7 @@ export class VideosService {
     return video.genres;
   }
 
-  async getUserVideo(userId: number) {
+  async getUserVideo(userId: string) {
     const reviews = await this.reviewRepository
       .createQueryBuilder('review')
       .leftJoinAndSelect('review.user', 'user')
@@ -87,7 +87,7 @@ export class VideosService {
     return myVideoBox;
   }
 
-  async getUserAboutThis(videoIds: number[], userId: number) {
+  async getUserAboutThis(videoIds: number[], userId: string) {
     const userCountObj = {};
     const similarUserIdBox = [];
     const resultRecommandVideoBox = [];

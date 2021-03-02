@@ -10,7 +10,7 @@ import { jwtConstants } from './constants';
 
 export interface RefreshTokenPayload {
   jti: string;
-  sub: number;
+  sub: string;
   email: string;
 }
 

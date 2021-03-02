@@ -38,14 +38,16 @@ export class AuthService {
     provider: string,
   ): Promise<any> {
     const { email, name, profileUrl, id } = userProfile;
-    let user = await this.usersService.findUserWithEmail(email);
+    let user = await this.usersService.findUserWithEmail(`${email}[AUTH]`);
 
     if (!user) {
       const newUser = new User();
-      newUser.email = email;
+      // newUser.id = Number(id)
+      newUser.id = id;
+      newUser.email = `${email}[AUTH]`;
       newUser.name = name;
       newUser.profileUrl = profileUrl;
-      newUser.nickname = String(id);
+      newUser.nickname = await this.usersService.generateRandomNickname();
       user = await this.usersService.saveUser(newUser, provider);
     }
     const accessToken = await this.tokenService.generateAccessToken(user);
