@@ -14,10 +14,30 @@ export class ReviewsService {
     @InjectRepository(LikeReview)
     private likeRepository: Repository<LikeReview>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Video) private videoRepository: Repository<Video>,
   ) {
     this.reviewRepository = reviewRepository;
     this.likeRepository = likeRepository;
     this.userRepository = userRepository;
+    this.videoRepository = videoRepository;
+  }
+
+  async getThisVidReviewAvgRate(videoId: number) {
+    // 비디오 컨트롤러에서 평균 별점을 낼 때 사용하는 로직
+    const thisVideo = await this.videoRepository.findOne({ id: videoId });
+    const thisVidReviewList = await this.reviewRepository.find({
+      video: thisVideo,
+    });
+    if (thisVidReviewList.length === 0) {
+      return 0;
+    }
+    const count = thisVidReviewList.length;
+    let sum = 0;
+    thisVidReviewList.map((review) => {
+      sum += review.rating;
+    });
+
+    return sum / count;
   }
 
   async addOrRemoveLike(user: User, review: Review) {

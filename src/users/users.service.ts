@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,6 +31,10 @@ export class UsersService {
 
   async validateCredentials(user: User, password: string): Promise<boolean> {
     return compare(password, user.password);
+  }
+
+  async findUserWithName(name: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { name } });
   }
 
   async updateLastLogin(id: number): Promise<void> {
