@@ -28,7 +28,7 @@ export class Review {
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;
 
-  @ManyToOne(() => Video, (video) => video.reviews)
+  @ManyToOne(() => Video, (video) => video.reviews, { onDelete: 'CASCADE' })
   video: Video;
 
   @CreateDateColumn({ type: 'timestamp' })

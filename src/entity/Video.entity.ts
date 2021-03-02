@@ -4,14 +4,12 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Genre } from './Genre.entity';
 import { Review } from './Review.entity';
-import { Type } from './Type.entity';
 
 @Entity()
 export class Video {
@@ -48,14 +46,13 @@ export class Video {
   @Column()
   netflixUrl: string;
 
-  @OneToMany(() => Review, (review) => review.video)
+  @Column()
+  type: string;
+
+  @OneToMany(() => Review, (review) => review.video, { cascade: true })
   reviews: Review[];
 
-  @ManyToOne(() => Type, (type) => type.videos)
-  type: Type;
-
-  @ManyToMany(() => Genre, (genre) => genre.videos)
-  @JoinTable({ name: 'video_genre' })
+  @ManyToMany(() => Genre, (genre) => genre.videos, { cascade: true })
   genres: Genre[];
 
   @CreateDateColumn()
