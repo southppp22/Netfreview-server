@@ -13,7 +13,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: jwtConstants.ACCESS_TOKEN_SECRET,
     });
   }
-
   async validate(payload: any) {
     const { sub: id, iat } = payload;
     const user = await this.usersService.findUserWithUserId(id);

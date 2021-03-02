@@ -1,10 +1,17 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { User } from 'src/entity/User.entity';
+import { SaveUserDto } from 'src/users/dto/saveUserDto';
 import { UsersService } from 'src/users/users.service';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {
+  constructor(
+    private usersService: UsersService,
+    private tokenService: TokenService,
+  ) {
     this.usersService = usersService;
+    this.tokenService = tokenService;
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -24,5 +31,25 @@ export class AuthService {
     }
     const { password, ...result } = user;
     return result;
+  }
+
+  async validateAuthLogin(
+    userProfile: SaveUserDto,
+    provider: string,
+  ): Promise<any> {
+    const { email, name, profileUrl, id } = userProfile;
+    let user = await this.usersService.findUserWithEmail(email);
+
+    if (!user) {
+      const newUser = new User();
+      newUser.email = email;
+      newUser.name = name;
+      newUser.profileUrl = profileUrl;
+      newUser.nickname = String(id);
+      user = await this.usersService.saveUser(newUser, provider);
+    }
+    const accessToken = await this.tokenService.generateAccessToken(user);
+    const refreshToken = await this.tokenService.generateRefreshToken(user);
+    return { user, tokens: { accessToken, refreshToken } };
   }
 }

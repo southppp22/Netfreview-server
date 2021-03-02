@@ -9,6 +9,7 @@ import {
   Response,
   UseGuards,
 } from '@nestjs/common';
+import { GoogleAuthGuard } from 'src/auth/guards/google-auth.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { TokenService } from 'src/auth/token.service';
@@ -99,5 +100,31 @@ export class UsersController {
     const { user } = req;
     await this.usersService.updateUserInfo(user, payload);
     return '회원정보가 수정되었습니다.';
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  googleLogin() {
+    console.log('test google login');
+  }
+
+  @Get('redirect')
+  @UseGuards(GoogleAuthGuard)
+  async googleLoginCallback(
+    @Request() req,
+    @Response({ passthrough: true }) res,
+  ) {
+    const {
+      user,
+      tokens: { accessToken, refreshToken },
+    } = req.user;
+    await this.usersService.updateLastLogin(user.id);
+
+    res.cookie('refreshToken', refreshToken);
+
+    return Object.assign({
+      data: { accessToken },
+      message: '로그인이 성공적으로 되었습니다.',
+    });
   }
 }

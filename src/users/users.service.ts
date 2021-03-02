@@ -40,7 +40,7 @@ export class UsersService {
     this.userRepository.save(user);
   }
 
-  async saveUser(user: User): Promise<void> {
+  async saveUser(user: User, provider?: string): Promise<User> {
     const { email, nickname } = user;
     let existingUser = await this.findUserWithEmail(email);
 
@@ -52,10 +52,15 @@ export class UsersService {
     if (existingUser) {
       throw new UnprocessableEntityException('이미 존재하는 닉네임입니다.');
     }
-    user.password = await hash(user.password, 10);
+
+    if (provider) {
+      user.password = await hash(Math.random().toString(36), 10);
+    } else {
+      user.password = await hash(user.password, 10);
+    }
     user.lastLogin = new Date();
 
-    await this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async deleteUser(id: number): Promise<void> {
