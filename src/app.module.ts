@@ -13,9 +13,10 @@ import { Genre } from './entity/Genre.entity';
 import { LikeReview } from './entity/LikeReview.entity';
 import { ConfigModule } from '@nestjs/config';
 import { RefreshToken } from './entity/RefreshToken.entity';
-import { ImageController } from './image/image.controller';
-import { ImageService } from './image/image.service';
 import { ImageModule } from './image/image.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -31,6 +32,19 @@ import { ImageModule } from './image/image.module';
       entities: [Review, User, Video, Image, Genre, LikeReview, RefreshToken],
       synchronize: true, // 배포 시 설정?
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        secure: false,
+        auth: {
+          user: process.env.NODEMAILER_USER,
+          pass: process.env.NODEMAILER_PASSWORD,
+        },
+      },
+      defaults: {
+        from: process.env.NODEMAILER_USER,
+      },
+    }),
     VideosModule,
     UsersModule,
     ReviewsModule,
@@ -38,6 +52,6 @@ import { ImageModule } from './image/image.module';
     ImageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}
