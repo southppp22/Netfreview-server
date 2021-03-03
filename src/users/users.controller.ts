@@ -14,7 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { TokenService } from 'src/auth/token.service';
 import { User } from 'src/entity/User.entity';
-import { ResponseWithToken } from './interfaces/responseWithToken';
+import { ResponseWithToken } from './interfaces/responseWithToken.interface';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -55,7 +55,7 @@ export class UsersController {
 
     return {
       data: { accessToken: token },
-      message: 'success',
+      message: 'accessToken이 발급 되었습니다.',
     };
   }
 
@@ -65,6 +65,7 @@ export class UsersController {
     return req.user;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('signout')
   async signOut(
     @Request() req,

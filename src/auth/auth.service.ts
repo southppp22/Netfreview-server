@@ -1,7 +1,9 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { User } from 'src/entity/User.entity';
-import { SaveUserDto } from 'src/users/dto/saveUserDto';
+import { UserDto } from 'src/users/dto/UserDto';
+import { ResponseUser } from 'src/users/interfaces/reponseUser.interface';
 import { UsersService } from 'src/users/users.service';
+import { ResponseOAuthLogin } from './interfaces/responseOAuthLogin.interface';
 import { TokenService } from './token.service';
 
 @Injectable()
@@ -14,7 +16,7 @@ export class AuthService {
     this.tokenService = tokenService;
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<ResponseUser> {
     const user = await this.usersService.findUserWithEmail(email);
 
     if (!user) {
@@ -29,14 +31,15 @@ export class AuthService {
     if (!isCorrectPassword) {
       throw new UnprocessableEntityException('비밀번호가 올바르지 않습니다.');
     }
-    const { password, ...result } = user;
-    return result;
+
+    delete user.password;
+    return user;
   }
 
-  async validateAuthLogin(
-    userProfile: SaveUserDto,
+  async validateOAuthLogin(
+    userProfile: UserDto,
     provider: string,
-  ): Promise<any> {
+  ): Promise<ResponseOAuthLogin> {
     const { email, name, profileUrl, id } = userProfile;
     let user = await this.usersService.findUserWithEmail(`${email}[AUTH]`);
 

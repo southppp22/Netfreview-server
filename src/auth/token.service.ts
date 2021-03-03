@@ -7,12 +7,7 @@ import { User } from 'src/entity/User.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { jwtConstants } from './constants';
-
-export interface RefreshTokenPayload {
-  jti: string;
-  sub: string;
-  email: string;
-}
+import { RefreshTokenPayload } from './interfaces/refreshTokenPayload.interface';
 
 @Injectable()
 export class TokenService {
@@ -26,14 +21,14 @@ export class TokenService {
     this.usersService = usersService;
   }
 
-  async findTokenById(id: number): Promise<RefreshToken | null> {
+  async findTokenById(id: string): Promise<RefreshToken | null> {
     return this.refreshRepository.findOne({ where: { id } });
   }
 
   async createRefreshToken(user: User): Promise<RefreshToken> {
     const refreshToken = new RefreshToken();
     refreshToken.user = user;
-    refreshToken.isRevoked = false;
+
     const existedToken = await this.refreshRepository
       .createQueryBuilder('refreshToken')
       .leftJoinAndSelect('refreshToken.user', 'user')
@@ -81,17 +76,13 @@ export class TokenService {
     const token = await this.getStoredTokenFromRefreshTokenPayload(payload);
 
     if (!token) {
-      throw new UnprocessableEntityException('Refresh token not found');
-    }
-
-    if (token.isRevoked) {
-      throw new UnprocessableEntityException('Refresh token revoked');
+      throw new UnprocessableEntityException('토큰이 존재하지 않습니다.');
     }
 
     const user = await this.getUserFromRefreshTokenPayload(payload);
 
     if (!user) {
-      throw new UnprocessableEntityException('Refresh token malformed');
+      throw new UnprocessableEntityException('유효하지 않은 토큰입니다.');
     }
 
     return { user, token };
@@ -116,7 +107,7 @@ export class TokenService {
       if (e instanceof TokenExpiredError) {
         throw new UnprocessableEntityException('Refresh token expired');
       } else {
-        throw new UnprocessableEntityException('Refresh token malformed');
+        throw new UnprocessableEntityException('유효하지 않은 토큰입니다.');
       }
     }
   }
@@ -127,7 +118,7 @@ export class TokenService {
     const subId = payload.sub;
 
     if (!subId) {
-      throw new UnprocessableEntityException('Refresh token malformed');
+      throw new UnprocessableEntityException('유효하지 않은 토큰입니다.');
     }
 
     return this.usersService.findUserWithUserId(subId);
@@ -135,17 +126,16 @@ export class TokenService {
 
   async getStoredTokenFromRefreshTokenPayload(
     payload: RefreshTokenPayload,
-  ): Promise<RefreshToken | null> {
+  ): Promise<RefreshToken> {
     const tokenId = payload.jti;
-
     if (!tokenId) {
       throw new UnprocessableEntityException('Refresh token malformed');
     }
-    return this.findTokenById(Number(tokenId));
+    return this.findTokenById(tokenId);
   }
 
-  async deleteRefreshTokenFromUser(user: User): Promise<any> {
-    return await this.refreshRepository
+  async deleteRefreshTokenFromUser(user: User): Promise<void> {
+    await this.refreshRepository
       .createQueryBuilder('refreshToken')
       .leftJoinAndSelect('refreshToken.user', 'user')
       .delete()
