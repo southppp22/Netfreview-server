@@ -18,9 +18,6 @@ export class RefreshToken {
   @JoinColumn()
   user: User;
 
-  @Column({ default: false })
-  isRevoked: boolean;
-
   @CreateDateColumn()
   createdAt: Date;
 
