@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { TokenService } from 'src/auth/token.service';
 import { User } from 'src/entity/User.entity';
+import { ResponseWithToken } from './interfaces/responseWithToken';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -27,40 +28,40 @@ export class UsersController {
   }
 
   @UseGuards(LocalAuthGuard)
-  @Post('signIn')
+  @Post('signin')
   async signIn(
     @Request() req,
     @Response({ passthrough: true }) res,
-  ): Promise<string> {
-    const { id } = req.user;
-    await this.usersService.updateLastLogin(id);
-    const accessToken = await this.tokenService.generateAccessToken(req.user);
-    const refreshToken = await this.tokenService.generateRefreshToken(req.user);
+  ): Promise<ResponseWithToken> {
+    const { user } = req;
+    await this.usersService.updateLastLogin(user.id);
+    const accessToken = await this.tokenService.generateAccessToken(user);
+    const refreshToken = await this.tokenService.generateRefreshToken(user);
 
     res.cookie('refreshToken', refreshToken);
 
-    return Object.assign({
+    return {
       data: { accessToken },
       message: '로그인이 성공적으로 되었습니다.',
-    });
+    };
   }
 
   @Get('refresh')
-  async refresh(@Request() req: any): Promise<string> {
+  async refresh(@Request() req: any): Promise<ResponseWithToken> {
     const { refreshToken } = req.cookies;
     const { token } = await this.tokenService.createAccessTokenFromRefreshToken(
       refreshToken,
     );
 
-    return Object.assign({
+    return {
       data: { accessToken: token },
       message: 'success',
-    });
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('userinfo')
-  getProfile(@Request() req) {
+  getProfile(@Request() req): User {
     return req.user;
   }
 
@@ -105,7 +106,7 @@ export class UsersController {
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   googleLogin() {
-    console.log('test google login');
+    return;
   }
 
   @Get('redirect')
@@ -113,7 +114,7 @@ export class UsersController {
   async googleLoginCallback(
     @Request() req,
     @Response({ passthrough: true }) res,
-  ) {
+  ): Promise<ResponseWithToken> {
     const {
       user,
       tokens: { accessToken, refreshToken },
@@ -122,9 +123,9 @@ export class UsersController {
 
     res.cookie('refreshToken', refreshToken);
 
-    return Object.assign({
+    return {
       data: { accessToken },
       message: '로그인이 성공적으로 되었습니다.',
-    });
+    };
   }
 }
