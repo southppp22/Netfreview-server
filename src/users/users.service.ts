@@ -1,10 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
+import { createRandomString } from 'src/common/utils/string.util';
 import { User } from 'src/entity/User.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserInfoDto } from './dto/UpdateUserInfoDto';
@@ -17,15 +14,15 @@ export class UsersService {
     this.userRepository = userRepository;
   }
 
-  async findUserWithUserId(userId: string): Promise<User | undefined> {
+  async findUserWithUserId(userId: string): Promise<User> {
     return await this.userRepository.findOne({ where: { id: userId } });
   }
 
-  async findUserWithEmail(email: string): Promise<User | undefined> {
+  async findUserWithEmail(email: string): Promise<User> {
     return await this.userRepository.findOne({ where: { email } });
   }
 
-  async findUserWithNickname(nickname: string): Promise<User | undefined> {
+  async findUserWithNickname(nickname: string): Promise<User> {
     return await this.userRepository.findOne({ where: { nickname } });
   }
 
@@ -33,14 +30,14 @@ export class UsersService {
     return compare(password, user.password);
   }
 
-  async findUserWithName(name: string): Promise<User | undefined> {
+  async findUserWithName(name: string): Promise<User> {
     return await this.userRepository.findOne({ where: { name } });
   }
 
   async updateLastLogin(id: string): Promise<void> {
     const user = await this.findUserWithUserId(id);
     user.lastLogin = new Date();
-    this.userRepository.save(user);
+    await this.userRepository.save(user);
   }
 
   async saveUser(user: User, provider?: string): Promise<User> {
@@ -71,19 +68,21 @@ export class UsersService {
   }
 
   async updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<void> {
-    if (Object.keys(dto).length !== 1) {
-      throw new BadRequestException('요청이 올바르지 않습니다.');
+    const entries = Object.entries(dto);
+
+    for (const entry of entries) {
+      const [column, data] = entry;
+      user[column] = data;
     }
-    const [[column, data]] = Object.entries(dto);
-    user[column] = data;
     await this.userRepository.save(user);
   }
 
   async generateRandomNickname(): Promise<string> {
-    let nickname = `user${Math.random().toString(36)}`;
+    let nickname = createRandomString(10);
     let isExist = await this.findUserWithNickname(nickname);
+
     while (isExist) {
-      nickname = `user${Math.random().toString(36)}`;
+      nickname = createRandomString(10);
       isExist = await this.findUserWithNickname(nickname);
     }
     return nickname;
