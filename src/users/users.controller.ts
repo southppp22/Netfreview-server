@@ -149,6 +149,6 @@ export class UsersController {
   async sendTemporaryPassword(@Body() body): Promise<string> {
     const { email } = body;
     await this.mailServcie.sendTemporaryPassword(email);
-    return '임시 비밀번호가 발급 되었습니다.';
+    return '메일이 전송되었습니다.';
   }
 }
