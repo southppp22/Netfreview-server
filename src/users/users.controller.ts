@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { TokenService } from 'src/auth/token.service';
 import { User } from 'src/entity/User.entity';
+import { MailService } from 'src/mail/mail.service';
 import { ResponseWithToken } from './interfaces/responseWithToken.interface';
 import { UsersService } from './users.service';
 
@@ -22,9 +23,11 @@ export class UsersController {
   constructor(
     private usersService: UsersService,
     private tokenService: TokenService,
+    private mailServcie: MailService,
   ) {
     this.usersService = usersService;
     this.tokenService = tokenService;
+    this.mailServcie = mailServcie;
   }
 
   @UseGuards(LocalAuthGuard)
@@ -38,7 +41,13 @@ export class UsersController {
     const accessToken = await this.tokenService.generateAccessToken(user);
     const refreshToken = await this.tokenService.generateRefreshToken(user);
 
-    res.cookie('refreshToken', refreshToken);
+    res.cookie('refreshToken', refreshToken, {
+      domain: 'gettoday4.click',
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
+    });
 
     return {
       data: { accessToken },
@@ -122,11 +131,24 @@ export class UsersController {
     } = req.user;
     await this.usersService.updateLastLogin(user.id);
 
-    res.cookie('refreshToken', refreshToken);
+    res.cookie('refreshToken', refreshToken, {
+      domain: 'gettoday4.click',
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
+    });
 
     return {
       data: { accessToken },
       message: '로그인이 성공적으로 되었습니다.',
     };
+  }
+
+  @Post('pw-find')
+  async sendTemporaryPassword(@Body() body): Promise<string> {
+    const { email } = body;
+    await this.mailServcie.sendTemporaryPassword(email);
+    return '임시 비밀번호가 발급 되었습니다.';
   }
 }
