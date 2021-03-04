@@ -16,7 +16,7 @@ export class ImageController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('upload')
+  @Post()
   @UseInterceptors(FileInterceptor('image'))
   async upload(@UploadedFile() image) {
     const url = await this.imageService.uploadImage(image);

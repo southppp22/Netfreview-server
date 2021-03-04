@@ -17,6 +17,7 @@ import { ImageModule } from './image/image.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { MailService } from './mail/mail.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { MailService } from './mail/mail.service';
       database: process.env.DATABASE,
       autoLoadEntities: true,
       entities: [Review, User, Video, Image, Genre, LikeReview, RefreshToken],
-      synchronize: true, // 배포 시 설정?
+      synchronize: true,
     }),
     MailerModule.forRoot({
       transport: {
@@ -50,6 +51,7 @@ import { MailService } from './mail/mail.service';
     ReviewsModule,
     ConfigModule,
     ImageModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, MailService],

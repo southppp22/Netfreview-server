@@ -1,7 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { getDateInHour } from 'src/common/utils/date.util';
 import { createRandomString } from 'src/common/utils/string.util';
 import { User } from 'src/entity/User.entity';
 import { Repository } from 'typeorm';
@@ -87,20 +86,5 @@ export class UsersService {
       isExist = await this.findUserWithNickname(nickname);
     }
     return nickname;
-  }
-
-  async changePasswordAfterhour(id: string, password: string) {
-    const DateInHour = getDateInHour();
-    const t = await this.userRepository.query(`
-    CREATE EVENT test1
-    ON SCHEDULE
-        AT '${DateInHour}'
-    COMMENT 'update password'
-    DO 
-    UPDATE user
-    SET password = '${password}'
-    WHERE id = '${id}'
-    `);
-    console.log(t);
   }
 }
