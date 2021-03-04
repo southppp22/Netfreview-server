@@ -41,7 +41,13 @@ export class UsersController {
     const accessToken = await this.tokenService.generateAccessToken(user);
     const refreshToken = await this.tokenService.generateRefreshToken(user);
 
-    res.cookie('refreshToken', refreshToken);
+    res.cookie('refreshToken', refreshToken, {
+      domain: 'gettoday4.click',
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
+    });
 
     return {
       data: { accessToken },
@@ -125,7 +131,13 @@ export class UsersController {
     } = req.user;
     await this.usersService.updateLastLogin(user.id);
 
-    res.cookie('refreshToken', refreshToken);
+    res.cookie('refreshToken', refreshToken, {
+      domain: 'gettoday4.click',
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
+    });
 
     return {
       data: { accessToken },
@@ -133,7 +145,7 @@ export class UsersController {
     };
   }
 
-  @Post('pass')
+  @Post('pw-find')
   async sendTemporaryPassword(@Body() body): Promise<string> {
     const { email } = body;
     await this.mailServcie.sendTemporaryPassword(email);
