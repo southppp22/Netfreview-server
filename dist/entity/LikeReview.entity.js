@@ -20,14 +20,14 @@ __decorate([
     __metadata("design:type", Number)
 ], LikeReview.prototype, "id", void 0);
 __decorate([
-    typeorm_1.OneToOne(() => Review_entity_1.Review, (review) => review.likeReview, {
+    typeorm_1.ManyToOne(() => Review_entity_1.Review, (review) => review.likeReview, {
         onDelete: 'CASCADE',
     }),
     typeorm_1.JoinColumn(),
     __metadata("design:type", Review_entity_1.Review)
 ], LikeReview.prototype, "review", void 0);
 __decorate([
-    typeorm_1.OneToOne(() => User_entity_1.User, (user) => user.likeReview, { onDelete: 'CASCADE' }),
+    typeorm_1.ManyToOne(() => User_entity_1.User, (user) => user.likeReview, { onDelete: 'CASCADE' }),
     typeorm_1.JoinColumn(),
     __metadata("design:type", User_entity_1.User)
 ], LikeReview.prototype, "user", void 0);

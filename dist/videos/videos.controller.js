@@ -47,7 +47,7 @@ let VideosController = class VideosController {
             if (!refreshToken) {
                 throw new common_1.UnauthorizedException('로그인 후 이용 가능합니다.');
             }
-            const { user } = await this.tokenService.resolveRefreshToken(req.cookies.refreshToken);
+            const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
             const userId = user.id;
             const videoList = await this.videosService.getUserVideo(userId);
             const videoIds = [];
@@ -59,7 +59,7 @@ let VideosController = class VideosController {
                 videoList: aboutThisVid,
             });
         }
-        else if (path === 'all') {
+        if (q) {
             const allVideolist = await this.videosService.getSearchVideo(q);
             return Object.assign({
                 videoList: allVideolist,
@@ -72,6 +72,8 @@ let VideosController = class VideosController {
     async getThisVideo(videoId) {
         const rawVideoData = await this.videosService.findVidWithId(videoId);
         const avgRating = await this.reviewsService.getThisVidReviewAvgRate(videoId);
+        if (!rawVideoData)
+            throw new common_1.BadRequestException('해당 비디오가 없습니다.');
         const genres = await this.videosService.getThisVidGenreWithId(videoId);
         const genreBucket = [];
         for (const genre of genres) {

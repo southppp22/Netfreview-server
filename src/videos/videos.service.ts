@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Genre } from 'src/entity/Genre.entity';
 import { Review } from 'src/entity/Review.entity';
-import { User } from 'src/entity/User.entity';
 import { Video } from 'src/entity/Video.entity';
 import { Repository } from 'typeorm';
 import { VideoDto } from './dto/videoDto';
@@ -111,9 +110,8 @@ export class VideosService {
     }
 
     for (const key in userCountObj) {
-      if (userCountObj[key] > previousCount)
-        similarUserIdBox.unshift(Number(key));
-      else similarUserIdBox.push(Number(key));
+      if (userCountObj[key] > previousCount) similarUserIdBox.unshift(key);
+      else similarUserIdBox.push(key);
 
       previousCount = userCountObj[key];
       if (similarUserIdBox.length > 3) break;

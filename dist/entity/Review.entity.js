@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:type", String)
 ], Review.prototype, "text", void 0);
 __decorate([
-    typeorm_1.OneToOne(() => LikeReview_entity_1.LikeReview, (like) => like.review, { cascade: true }),
+    typeorm_1.OneToMany(() => LikeReview_entity_1.LikeReview, (like) => like.review, { cascade: true }),
     __metadata("design:type", LikeReview_entity_1.LikeReview)
 ], Review.prototype, "likeReview", void 0);
 __decorate([

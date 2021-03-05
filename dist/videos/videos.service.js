@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const Genre_entity_1 = require("../entity/Genre.entity");
 const Review_entity_1 = require("../entity/Review.entity");
-const User_entity_1 = require("../entity/User.entity");
 const Video_entity_1 = require("../entity/Video.entity");
 const typeorm_2 = require("typeorm");
 let VideosService = class VideosService {
@@ -111,9 +110,9 @@ let VideosService = class VideosService {
         }
         for (const key in userCountObj) {
             if (userCountObj[key] > previousCount)
-                similarUserIdBox.unshift(Number(key));
+                similarUserIdBox.unshift(key);
             else
-                similarUserIdBox.push(Number(key));
+                similarUserIdBox.push(key);
             previousCount = userCountObj[key];
             if (similarUserIdBox.length > 3)
                 break;

@@ -43,7 +43,7 @@ export class User {
   @OneToOne(() => Image, (image) => image.user)
   image: Image;
 
-  @OneToOne(() => LikeReview, (like) => like.user, { cascade: true })
+  @OneToMany(() => LikeReview, (like) => like.user, { cascade: true })
   likeReview: LikeReview;
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)

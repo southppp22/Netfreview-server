@@ -55,7 +55,7 @@ __decorate([
     __metadata("design:type", Image_entity_1.Image)
 ], User.prototype, "image", void 0);
 __decorate([
-    typeorm_1.OneToOne(() => LikeReview_entity_1.LikeReview, (like) => like.user, { cascade: true }),
+    typeorm_1.OneToMany(() => LikeReview_entity_1.LikeReview, (like) => like.user, { cascade: true }),
     __metadata("design:type", LikeReview_entity_1.LikeReview)
 ], User.prototype, "likeReview", void 0);
 __decorate([

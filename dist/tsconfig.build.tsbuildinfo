@@ -2857,17 +2857,17 @@
         "affectsGlobalScope": false
       },
       "../src/entity/user.entity.ts": {
-        "version": "e442c855db7a8b9624e957be1deab905bdf093bc545301a2cae058b9e3842f9f",
+        "version": "87c7e616416d1c9db934fe58d22d5d8b3905afa9cc82fd20dffa54f3b23afec1",
         "signature": "411a7e06f7c1075f540f3be047d2431bf45028f214ca7fb12e4d7ae69b90dc17",
         "affectsGlobalScope": false
       },
       "../src/entity/likereview.entity.ts": {
-        "version": "0f47e638b8bd08b61fd024ba304d7eda7b9c5e4b5cea1f19d9e5f0fd9434bfe4",
+        "version": "f5cd353c62cff9c87ba852fc6ba724a56137e99799c6bc4b3fc3cf4f0ed5448f",
         "signature": "cb8512823a9dac1e76e200abc86549067f17566f7c6f2d60029d019372250ccb",
         "affectsGlobalScope": false
       },
       "../src/entity/review.entity.ts": {
-        "version": "771ab7966b1c85649b92253dacdc9d2d7d73ad889a6884ad0a9e1a711b7ee397",
+        "version": "31b0bad2f42da185a3f1ef8d29b2c07947bb7e5b7a6496c03425ca2f3f143269",
         "signature": "b4ad1bcdd59b47dd8559e2a6508b4c19e789a3e9cbbb8c95d62ee8da826e01d2",
         "affectsGlobalScope": false
       },
@@ -2887,7 +2887,7 @@
         "affectsGlobalScope": false
       },
       "../src/videos/videos.service.ts": {
-        "version": "465947e40f8e42bf181150830337ad8689915e1ff4346510e724d290ecf6f0a0",
+        "version": "69e3f2647e7982d651074ba42d88687f28282eeba4bea0b3d71615cef2163a5e",
         "signature": "46b39840ed70c2296d2df0638153f2a9adde0df27611e811699e8426d8826759",
         "affectsGlobalScope": false
       },
@@ -3232,7 +3232,7 @@
         "affectsGlobalScope": false
       },
       "../src/reviews/reviews.service.ts": {
-        "version": "79861f592c92db26a604db5a4af4f9adc4d74490b5f8c85e76d569892ba2aedb",
+        "version": "5bbff0915bcbe66bcbc4847d2cee25ec9e7802df6d71e7473b3c69731cdcce8a",
         "signature": "3a31a574ce0bfd6d7cc1bb166e1b4d86bb5c900b7137b390ebe8b62a95b2432a",
         "affectsGlobalScope": false
       },
@@ -3302,7 +3302,7 @@
         "affectsGlobalScope": false
       },
       "../src/videos/videos.controller.ts": {
-        "version": "d9eef1cd4f64832e48f91d98175c946d2d316d8e50f0b933c93de0242ccd7732",
+        "version": "067b4e645e4bbffac6c6fdc07f9d59ac5784a6252ef79b6522715a0a18ae1f6c",
         "signature": "2171ab2440d24b9ad1940f917ea546aa1ab8ca89f9fdd0ca09569bb8ab2544fa",
         "affectsGlobalScope": false
       },
@@ -3517,8 +3517,8 @@
         "affectsGlobalScope": false
       },
       "../src/reviews/reviews.controller.ts": {
-        "version": "5efd69206deb9d312f3fc2106d22a548027c26be5f81b0f3452cb3813005fd61",
-        "signature": "6a287f1de4dda8b0c8c7b7b79536d105d827606cc0d9248c5e00603d78004112",
+        "version": "9df58b2d1b0417a42babe540bee9d43cdd4e771cfd2577dc6fa7e0e06f9cc28b",
+        "signature": "cd40e32e1e7807ca3efd05e00deea3a3b5968c21b147cd7b70fbcd697ac7a79a",
         "affectsGlobalScope": false
       },
       "../src/reviews/reviews.module.ts": {
@@ -10967,6 +10967,7 @@
       "../src/reviews/reviews.controller.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../src/auth/guards/jwt-auth.guard.ts",
+        "../src/auth/token.service.ts",
         "../src/reviews/dto/postreviewdto.ts",
         "../src/reviews/reviews.service.ts",
         "../src/videos/videos.service.ts"
@@ -11049,7 +11050,6 @@
         "../node_modules/typeorm/index.d.ts",
         "../src/entity/genre.entity.ts",
         "../src/entity/review.entity.ts",
-        "../src/entity/user.entity.ts",
         "../src/entity/video.entity.ts",
         "../src/videos/dto/videodto.ts"
       ]
@@ -16271,6 +16271,7 @@
         "../src/users/users.service.ts"
       ],
       "../src/reviews/reviews.controller.ts": [
+        "../src/auth/token.service.ts",
         "../src/reviews/dto/postreviewdto.ts",
         "../src/reviews/reviews.service.ts",
         "../src/videos/videos.service.ts"

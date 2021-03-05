@@ -15,15 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewsController = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const token_service_1 = require("../auth/token.service");
 const videos_service_1 = require("../videos/videos.service");
 const postReviewDto_1 = require("./dto/postReviewDto");
 const reviews_service_1 = require("./reviews.service");
 let ReviewsController = class ReviewsController {
-    constructor(reviewsService, videosService) {
+    constructor(reviewsService, videosService, tokenService) {
         this.reviewsService = reviewsService;
         this.videosService = videosService;
+        this.tokenService = tokenService;
         this.reviewsService = reviewsService;
         this.videosService = videosService;
+        this.tokenService = tokenService;
     }
     async likeThisReview(body, req) {
         const user = req.user;
@@ -35,16 +38,19 @@ let ReviewsController = class ReviewsController {
     }
     async findThisVidReview(videoId, page, header, req) {
         const accessToken = header.authorization;
+        const refreshToken = req.cookies.refreshToken;
         const video = await this.videosService.findVidWithId(videoId);
         let myuser;
         if (!accessToken) {
             myuser = 'guest';
         }
         else {
-            myuser = req.user;
+            const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
+            myuser = user;
         }
+        console.log(req.user);
         const { videoList, userReview, } = await this.reviewsService.findThisVidAndUserReview(video, myuser);
-        if (videoList === null) {
+        if (videoList === null || videoList.length === 0) {
             throw new common_1.UnprocessableEntityException('아직 이 비디오에 등록 된 리뷰가 없습니다!');
         }
         const sliceVideoList = videoList.slice(8 * (page - 1), 8 * page);
@@ -115,7 +121,8 @@ __decorate([
 ReviewsController = __decorate([
     common_1.Controller('reviews'),
     __metadata("design:paramtypes", [reviews_service_1.ReviewsService,
-        videos_service_1.VideosService])
+        videos_service_1.VideosService,
+        token_service_1.TokenService])
 ], ReviewsController);
 exports.ReviewsController = ReviewsController;
 //# sourceMappingURL=reviews.controller.js.map

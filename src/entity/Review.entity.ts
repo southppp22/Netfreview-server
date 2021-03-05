@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,7 +22,7 @@ export class Review {
   @Column()
   text: string;
 
-  @OneToOne(() => LikeReview, (like) => like.review, { cascade: true })
+  @OneToMany(() => LikeReview, (like) => like.review, { cascade: true })
   likeReview: LikeReview;
 
   @ManyToOne(() => User, (user) => user.reviews)
