@@ -44,6 +44,7 @@ export class VideosController {
       const { user } = await this.tokenService.resolveRefreshToken(
         req.cookies.refreshToken,
       );
+
       const videoList = await this.videosService.getUserVideo(user.id);
       return Object.assign({
         videoList: videoList,
@@ -54,7 +55,7 @@ export class VideosController {
         throw new UnauthorizedException('로그인 후 이용 가능합니다.');
       }
       const { user } = await this.tokenService.resolveRefreshToken(
-        req.cookies.refreshToken,
+        refreshToken,
       );
       const userId = user.id;
       const videoList = await this.videosService.getUserVideo(userId);
@@ -69,7 +70,8 @@ export class VideosController {
       return Object.assign({
         videoList: aboutThisVid,
       });
-    } else if (path === 'all') {
+    }
+    if (q) {
       const allVideolist = await this.videosService.getSearchVideo(q);
       return Object.assign({
         videoList: allVideolist,
@@ -87,6 +89,8 @@ export class VideosController {
     const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
       videoId,
     );
+    if (!rawVideoData) throw new BadRequestException('해당 비디오가 없습니다.');
+
     const genres = await this.videosService.getThisVidGenreWithId(videoId);
     const genreBucket = [];
     for (const genre of genres) {

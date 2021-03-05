@@ -129,9 +129,5 @@ export class ReviewsService {
       user: review.user,
       video: review.video,
     });
-    // review.text = req.text;
-    // review.rating = req.rating;
-    // review.user = user;
-    // review.video = video;
   }
 }

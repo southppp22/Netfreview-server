@@ -6,7 +6,6 @@ import { RefreshToken } from 'src/entity/RefreshToken.entity';
 import { User } from 'src/entity/User.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
-import { jwtConstants } from './constants';
 import { RefreshTokenPayload } from './interfaces/refreshTokenPayload.interface';
 
 @Injectable()
@@ -50,8 +49,9 @@ export class TokenService {
   async generateAccessToken(user: User): Promise<string> {
     const payload = { email: user.email, sub: user.id };
 
+    console.log(process.env.ACCESS_TOKEN_SECRET);
     const opts = {
-      secret: jwtConstants.ACCESS_TOKEN_SECRET,
+      secret: process.env.ACCESS_TOKEN_SECRET,
       expiresIn: '2h',
     };
     return this.jwtService.sign(payload, opts);
@@ -63,7 +63,7 @@ export class TokenService {
 
     const opts = {
       jwtid: String(token.id),
-      secret: jwtConstants.REFRESH_TOKEN_SECRET,
+      secret: process.env.REFRESH_TOKEN_SECRET,
       expiresIn: '30d',
     };
     return this.jwtService.sign(payload, opts);
@@ -101,7 +101,7 @@ export class TokenService {
   async decodeRefreshToken(token: string): Promise<RefreshTokenPayload> {
     try {
       return this.jwtService.verify(token, {
-        secret: jwtConstants.REFRESH_TOKEN_SECRET,
+        secret: process.env.REFRESH_TOKEN_SECRET,
       });
     } catch (e) {
       if (e instanceof TokenExpiredError) {
