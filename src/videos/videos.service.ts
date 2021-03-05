@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Genre } from 'src/entity/Genre.entity';
 import { Review } from 'src/entity/Review.entity';
 import { Video } from 'src/entity/Video.entity';
+import { ReviewsService } from 'src/reviews/reviews.service';
 import { Repository } from 'typeorm';
 import { VideoDto } from './dto/videoDto';
 
@@ -179,5 +180,12 @@ export class VideosService {
       return videoList;
     }
     return await this.videoRepository.find();
+  }
+
+  async getAllVideoWithReview() {
+    return await this.videoRepository
+      .createQueryBuilder('video')
+      .leftJoinAndSelect('video.reviews', 'review')
+      .getMany();
   }
 }

@@ -78,6 +78,7 @@ export class ReviewsController {
 
     const sliceVideoList = videoList.slice(8 * (page - 1), 8 * page);
     return Object.assign({
+      totalCount: videoList.length,
       reviewList: sliceVideoList,
       myReview: userReview,
     });
