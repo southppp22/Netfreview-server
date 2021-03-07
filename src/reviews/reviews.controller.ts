@@ -55,7 +55,7 @@ export class ReviewsController {
     const video = await this.videosService.findVidWithId(videoId);
 
     let myuser;
-    if (!accessToken) {
+    if (!accessToken || !refreshToken) {
       myuser = 'guest';
     } else {
       const { user } = await this.tokenService.resolveRefreshToken(
