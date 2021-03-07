@@ -71,16 +71,17 @@ export class ReviewsService {
     const videoList = [];
 
     if (rawVideoList.length) {
-      rawVideoList.map(async (oneVideo) => {
+      for (const review of rawVideoList) {
+        const likeCount = await this.likeRepository.count({ review });
+        const isLike = await this.likeRepository.count({ user, review });
         videoList.push({
-          ...oneVideo,
-          likeCount: await this.likeRepository.count({ review: oneVideo }),
-          isLike: await this.likeRepository.count({ user, review: oneVideo }),
-          reviewId: oneVideo.id,
+          ...review,
+          likeCount,
+          isLike,
         });
-      });
+      }
     } else {
-      return { videoList: null, userReview: null };
+      return { videoList, userReview: null };
     }
 
     const rawUserReview = await this.reviewRepository.findOne({ video, user });

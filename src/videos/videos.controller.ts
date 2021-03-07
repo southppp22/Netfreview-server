@@ -30,6 +30,11 @@ export class VideosController {
     this.tokenService = tokenService;
   }
 
+  @Post('/test')
+  async test() {
+    await this.videosService.saveDummyVideo();
+  }
+
   @Get('/videolist')
   async getVideoList(
     @Query('path') path: string,
