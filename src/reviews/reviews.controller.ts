@@ -63,7 +63,7 @@ export class ReviewsController {
       );
       myuser = user;
     }
-    console.log(req.user);
+    console.log(myuser);
 
     const {
       videoList,
