@@ -47,15 +47,19 @@ export class ReviewsController {
   async findThisVidReview(
     @Param('videoId') videoId: number,
     @Query('page') page: number,
-    @Headers() header,
     @Request() req,
   ): Promise<void> {
-    const accessToken = header.authorization;
+    if (typeof Number(page) !== 'number' || page <= 0) {
+      throw new NotFoundException(
+        '페이지를 입력받지 못했거나 숫자형태가 아니거나 0이하로 받았습니다.',
+      );
+    }
+
     const refreshToken = req.cookies.refreshToken;
     const video = await this.videosService.findVidWithId(videoId);
 
     let myuser;
-    if (!accessToken || !refreshToken) {
+    if (!refreshToken) {
       myuser = 'guest';
     } else {
       const { user } = await this.tokenService.resolveRefreshToken(
@@ -63,23 +67,15 @@ export class ReviewsController {
       );
       myuser = user;
     }
-    console.log(req.user);
 
     const {
       videoList,
       userReview,
     } = await this.reviewsService.findThisVidAndUserReview(video, myuser);
 
-    if (videoList === null || videoList.length === 0) {
-      throw new UnprocessableEntityException(
-        '아직 이 비디오에 등록 된 리뷰가 없습니다!',
-      );
-    }
-
-    const sliceVideoList = videoList.slice(8 * (page - 1), 8 * page);
     return Object.assign({
       totalCount: videoList.length,
-      reviewList: sliceVideoList,
+      reviewList: videoList.slice(8 * (page - 1), 8 * page),
       myReview: userReview,
     });
   }
