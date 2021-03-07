@@ -67,11 +67,17 @@ export class ReviewsService {
     if (user === 'guest') {
       user = await this.userRepository.findOne({ name: 'guest' });
     }
-    const rawVideoList = await this.reviewRepository.find({ video });
+    // const rawVideoList = await this.reviewRepository.find({ video });
+    const rawVideoList = await this.reviewRepository
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.user', 'user')
+      .where({ video })
+      .getMany();
     const videoList = [];
 
     if (rawVideoList.length) {
       for (const review of rawVideoList) {
+        delete review.user.password;
         const likeCount = await this.likeRepository.count({ review });
         const isLike = await this.likeRepository.count({ user, review });
         videoList.push({
