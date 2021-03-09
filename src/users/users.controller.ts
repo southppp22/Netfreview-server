@@ -42,11 +42,11 @@ export class UsersController {
     const refreshToken = await this.tokenService.generateRefreshToken(user);
 
     res.cookie('refreshToken', refreshToken, {
-      // domain: 'gettoday4.click',
+      domain: 'gettoday4.click',
       path: '/',
-      // secure: true,
-      // httpOnly: true,
-      // sameSite: 'None',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
     });
 
     return {
@@ -132,11 +132,11 @@ export class UsersController {
     await this.usersService.updateLastLogin(user.id);
 
     res.cookie('refreshToken', refreshToken, {
-      // domain: 'gettoday4.click',
+      domain: 'gettoday4.click',
       path: '/',
-      // secure: true,
-      // httpOnly: true,
-      // sameSite: 'None',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
     });
 
     return {

@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Headers,
   NotFoundException,
   Param,
@@ -12,7 +11,6 @@ import {
   Post,
   Query,
   Request,
-  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -67,7 +65,6 @@ export class ReviewsController {
 
     let myuser;
     if (!accessToken) {
-      console.log('a');
       myuser = 'guest';
     } else {
       const { user } = await this.tokenService.resolveRefreshToken(

@@ -48,7 +48,6 @@ let ReviewsController = class ReviewsController {
         const video = await this.videosService.findVidWithId(videoId);
         let myuser;
         if (!accessToken) {
-            console.log('a');
             myuser = 'guest';
         }
         else {
