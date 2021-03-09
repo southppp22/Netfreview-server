@@ -69,17 +69,23 @@ export class UsersService {
 
   async updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<void> {
     const entries = Object.entries(dto);
+    let password;
 
     for (const entry of entries) {
       const [column, data] = entry;
+      if (column === 'password') {
+        password = await hash(data, 10);
+      }
       user[column] = data;
     }
-    const password = await hash(user.password, 10);
     this.userRepository.save({
       id: user.id,
       email: user.email,
       name: user.name,
       password,
+      profileUrl: user.profileUrl,
+      introduction: user.introduction,
+      nickname: user.nickname,
     });
   }
 

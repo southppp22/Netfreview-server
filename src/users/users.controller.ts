@@ -80,13 +80,10 @@ export class UsersController {
     @Request() req,
     @Response({ passthrough: true }) res,
   ): Promise<string> {
-    const { refreshToken } = req.cookies;
-    const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
+    const { user } = req;
     res.clearCookie('refreshToken');
-
     await this.tokenService.deleteRefreshTokenFromUser(user);
     await this.usersService.updateLastLogin(user.id);
-
     return '로그아웃 되었습니다.';
   }
 

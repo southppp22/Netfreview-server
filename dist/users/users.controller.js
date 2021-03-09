@@ -53,8 +53,7 @@ let UsersController = class UsersController {
         return req.user;
     }
     async signOut(req, res) {
-        const { refreshToken } = req.cookies;
-        const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
+        const { user } = req;
         res.clearCookie('refreshToken');
         await this.tokenService.deleteRefreshTokenFromUser(user);
         await this.usersService.updateLastLogin(user.id);
