@@ -64,6 +64,26 @@ export class VideosController {
       );
       const userId = user.id;
       const videoList = await this.videosService.getUserVideo(userId);
+      if (!videoList || videoList.length === 0) {
+        const videoList2 = await this.videosService.getAllVideoWithReview();
+        const videoBox = [];
+
+        // GET TOP5 VID
+        for (const video of videoList2) {
+          const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
+            video.id,
+          );
+
+          videoBox.push({ ...video, rating: avgRating });
+        }
+        videoBox.sort((a, b) => b.rating - a.rating);
+        const top5Vidbox = videoBox.slice(0, 5);
+
+        return Object.assign({
+          top5VideoList: top5Vidbox,
+          message: '유저의 리뷰가 없어서 메인페이지 top5 비디오리스트를 보냄',
+        });
+      }
       const videoIds = [];
       for (const video of videoList) {
         videoIds.push(video.id);
@@ -95,7 +115,6 @@ export class VideosController {
         videoBox.length - 5,
         videoBox.length,
       );
-      console.log(mostReviewVid, notMostReviewVid);
       //리뷰없는거 5개, 최다리뷰 5개
 
       return Object.assign({
