@@ -53,6 +53,20 @@ let VideosController = class VideosController {
             const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
             const userId = user.id;
             const videoList = await this.videosService.getUserVideo(userId);
+            if (!videoList || videoList.length === 0) {
+                const videoList2 = await this.videosService.getAllVideoWithReview();
+                const videoBox = [];
+                for (const video of videoList2) {
+                    const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
+                    videoBox.push(Object.assign(Object.assign({}, video), { rating: avgRating }));
+                }
+                videoBox.sort((a, b) => b.rating - a.rating);
+                const top5Vidbox = videoBox.slice(0, 5);
+                return Object.assign({
+                    top5VideoList: top5Vidbox,
+                    message: '유저의 리뷰가 없어서 메인페이지 top5 비디오리스트를 보냄',
+                });
+            }
             const videoIds = [];
             for (const video of videoList) {
                 videoIds.push(video.id);
@@ -74,7 +88,6 @@ let VideosController = class VideosController {
             videoBox.sort((a, b) => b.reviews.length - a.reviews.length);
             const mostReviewVid = videoBox.slice(0, 5);
             const notMostReviewVid = videoBox.slice(videoBox.length - 5, videoBox.length);
-            console.log(mostReviewVid, notMostReviewVid);
             return Object.assign({
                 top5VideoList: top5Vidbox,
                 mostReviewVidList: mostReviewVid,

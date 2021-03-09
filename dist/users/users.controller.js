@@ -36,11 +36,7 @@ let UsersController = class UsersController {
         const accessToken = await this.tokenService.generateAccessToken(user);
         const refreshToken = await this.tokenService.generateRefreshToken(user);
         res.cookie('refreshToken', refreshToken, {
-            domain: 'gettoday4.click',
             path: '/',
-            secure: true,
-            httpOnly: true,
-            sameSite: 'None',
         });
         return {
             data: { accessToken },
@@ -87,11 +83,7 @@ let UsersController = class UsersController {
         const { user, tokens: { accessToken, refreshToken }, } = req.user;
         await this.usersService.updateLastLogin(user.id);
         res.cookie('refreshToken', refreshToken, {
-            domain: 'gettoday4.click',
             path: '/',
-            secure: true,
-            httpOnly: true,
-            sameSite: 'None',
         });
         return {
             data: { accessToken },

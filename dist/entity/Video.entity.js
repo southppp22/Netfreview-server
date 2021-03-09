@@ -38,10 +38,6 @@ __decorate([
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Video.prototype, "runtime", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
 ], Video.prototype, "ageLimit", void 0);
 __decorate([
     typeorm_1.Column(),

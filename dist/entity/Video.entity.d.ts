@@ -6,7 +6,6 @@ export declare class Video {
     description: string;
     director: string;
     actor: string;
-    runtime: string;
     ageLimit: string;
     releaseYear: string;
     posterUrl: string;

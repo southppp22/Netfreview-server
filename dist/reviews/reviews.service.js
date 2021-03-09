@@ -121,11 +121,14 @@ let ReviewsService = class ReviewsService {
     }
     async patchReview(user, video, req) {
         const review = await this.reviewRepository.findOne({ user, video });
+        const id = review.id;
+        await this.deleteReview(id);
         await this.reviewRepository.save({
-            id: review.id,
+            id,
             text: req.text,
-            user: review.user,
-            video: review.video,
+            rating: req.rating,
+            user,
+            video,
         });
     }
 };

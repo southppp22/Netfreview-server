@@ -19,7 +19,7 @@ const Genre_entity_1 = require("../entity/Genre.entity");
 const Review_entity_1 = require("../entity/Review.entity");
 const Video_entity_1 = require("../entity/Video.entity");
 const typeorm_2 = require("typeorm");
-const videoList_1 = require("../../DummyVideo/videoList");
+const videoData = require("./videoData.json");
 let VideosService = class VideosService {
     constructor(videoRepository, genreRepository, reviewRepository) {
         this.videoRepository = videoRepository;
@@ -36,16 +36,15 @@ let VideosService = class VideosService {
         const genreBox = [];
         const video = new Video_entity_1.Video();
         video.title = newVideo.title;
-        video.actor = newVideo.actor;
-        video.ageLimit = newVideo.ageLimit;
+        video.actor = newVideo.actor.join(',');
+        video.ageLimit = String(newVideo.ageLimit);
         video.bannerUrl = newVideo.bannerUrl;
         video.description = newVideo.description;
-        video.director = newVideo.director;
+        video.director = newVideo.director.join(',');
         video.netflixUrl = newVideo.netflixUrl;
         video.posterUrl = newVideo.posterUrl;
         video.releaseYear = newVideo.releaseYear;
         video.type = newVideo.type;
-        video.runtime = newVideo.runtime;
         video.genres = genreBox;
         for (const genre of newVideo.genres) {
             const isGenre = await this.genreRepository.findOne({ name: genre });
@@ -155,7 +154,7 @@ let VideosService = class VideosService {
             .getMany();
     }
     async saveDummyVideo() {
-        for (const video of videoList_1.videoList) {
+        for (const video of videoData.data) {
             await this.addThisVideo(video);
         }
         return 'success ADD!';
