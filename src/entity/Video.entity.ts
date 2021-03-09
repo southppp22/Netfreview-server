@@ -29,9 +29,6 @@ export class Video {
   actor: string;
 
   @Column()
-  runtime: string;
-
-  @Column()
   ageLimit: string;
 
   @Column()

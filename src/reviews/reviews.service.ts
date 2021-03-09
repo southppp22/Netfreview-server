@@ -67,7 +67,6 @@ export class ReviewsService {
     if (user === 'guest') {
       user = await this.userRepository.findOne({ name: 'guest' });
     }
-    // const rawVideoList = await this.reviewRepository.find({ video });
     const rawVideoList = await this.reviewRepository
       .createQueryBuilder('review')
       .leftJoinAndSelect('review.user', 'user')
@@ -130,11 +129,14 @@ export class ReviewsService {
 
   async patchReview(user: User, video: Video, req: ReviewDto) {
     const review = await this.reviewRepository.findOne({ user, video });
+    const id = review.id;
+    await this.deleteReview(id);
     await this.reviewRepository.save({
-      id: review.id,
+      id,
       text: req.text,
-      user: review.user,
-      video: review.video,
+      rating: req.rating,
+      user,
+      video,
     });
   }
 }

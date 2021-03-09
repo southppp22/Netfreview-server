@@ -1,0 +1,27 @@
+{
+  "name": "crawling",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "casperjs": "^1.1.4",
+    "cheerio": "^1.0.0-rc.5",
+    "cheerio-httpcli": "^0.8.1",
+    "csv-parse": "^4.15.3",
+    "fs": "0.0.1-security",
+    "jsdom": "^16.5.0",
+    "justwatch-api": "^1.0.7",
+    "nodemon": "^2.0.7",
+    "phantomjs": "^2.1.7",
+    "request": "^2.88.2",
+    "selenium-webdriver": "^3.6.0",
+    "xlsx": "^0.16.9"
+  }
+}

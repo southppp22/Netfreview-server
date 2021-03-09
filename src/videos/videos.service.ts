@@ -5,7 +5,7 @@ import { Review } from 'src/entity/Review.entity';
 import { Video } from 'src/entity/Video.entity';
 import { Repository } from 'typeorm';
 import { VideoDto } from './dto/videoDto';
-import { videoList } from '../../DummyVideo/videoList';
+import * as videoData from './videoData.json';
 
 @Injectable()
 export class VideosService {
@@ -28,16 +28,15 @@ export class VideosService {
 
     const video = new Video();
     video.title = newVideo.title;
-    video.actor = newVideo.actor;
-    video.ageLimit = newVideo.ageLimit;
+    video.actor = newVideo.actor.join(',');
+    video.ageLimit = String(newVideo.ageLimit);
     video.bannerUrl = newVideo.bannerUrl;
     video.description = newVideo.description;
-    video.director = newVideo.director;
+    video.director = newVideo.director.join(',');
     video.netflixUrl = newVideo.netflixUrl;
     video.posterUrl = newVideo.posterUrl;
     video.releaseYear = newVideo.releaseYear;
     video.type = newVideo.type;
-    video.runtime = newVideo.runtime;
     video.genres = genreBox;
 
     for (const genre of newVideo.genres) {
@@ -190,7 +189,7 @@ export class VideosService {
   }
 
   async saveDummyVideo() {
-    for (const video of videoList) {
+    for (const video of videoData.data) {
       await this.addThisVideo(video);
     }
 
