@@ -65,12 +65,7 @@ let TokenService = class TokenService {
             });
         }
         catch (e) {
-            if (e instanceof jsonwebtoken_1.TokenExpiredError) {
-                throw new common_1.UnprocessableEntityException('Refresh token expired');
-            }
-            else {
-                throw new common_1.UnprocessableEntityException('유효하지 않은 토큰입니다.');
-            }
+            return null;
         }
     }
     async generateRefreshToken(user) {

@@ -45,12 +45,14 @@ let ReviewsController = class ReviewsController {
         if (header.authorization) {
             const rawAccessToken = header.authorization.slice(7);
             accessToken = await this.tokenService.resolveAccessToken(rawAccessToken);
-            const { email } = accessToken;
-            const { iat } = accessToken;
-            const accessTokenIat = new Date(iat * 1000 + 1000);
-            myuser = await this.usersService.findUserWithEmail(email);
-            if (myuser.lastLogin > accessTokenIat)
-                accessToken = null;
+            if (accessToken) {
+                const { email } = accessToken;
+                const { iat } = accessToken;
+                const accessTokenIat = new Date(iat * 1000 + 1000);
+                myuser = await this.usersService.findUserWithEmail(email);
+                if (myuser.lastLogin > accessTokenIat)
+                    accessToken = null;
+            }
         }
         if (typeof Number(page) !== 'number' || Number(page) <= 0 || !page) {
             throw new common_1.NotFoundException('페이지를 입력받지 못했거나 숫자형태가 아니거나 0이하로 받았습니다.');
