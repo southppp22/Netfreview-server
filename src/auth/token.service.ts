@@ -49,12 +49,25 @@ export class TokenService {
   async generateAccessToken(user: User): Promise<string> {
     const payload = { email: user.email, sub: user.id };
 
-    console.log(process.env.ACCESS_TOKEN_SECRET);
     const opts = {
       secret: process.env.ACCESS_TOKEN_SECRET,
       expiresIn: '2h',
     };
     return this.jwtService.sign(payload, opts);
+  }
+
+  async resolveAccessToken(encoded: string) {
+    try {
+      return this.jwtService.verify(encoded, {
+        secret: process.env.ACCESS_TOKEN_SECRET,
+      });
+    } catch (e) {
+      if (e instanceof TokenExpiredError) {
+        throw new UnprocessableEntityException('Refresh token expired');
+      } else {
+        throw new UnprocessableEntityException('유효하지 않은 토큰입니다.');
+      }
+    }
   }
 
   async generateRefreshToken(user: User): Promise<string> {

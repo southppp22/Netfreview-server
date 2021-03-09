@@ -75,7 +75,6 @@ export class UsersService {
       user[column] = data;
     }
     const password = await hash(user.password, 10);
-    console.log(user);
     this.userRepository.save({
       id: user.id,
       email: user.email,
