@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { TokenService } from 'src/auth/token.service';
+import { UsersService } from 'src/users/users.service';
 import { VideosService } from 'src/videos/videos.service';
 import { ReviewDto } from './dto/postReviewDto';
 import { ReviewsService } from './reviews.service';
@@ -25,10 +26,12 @@ export class ReviewsController {
     private reviewsService: ReviewsService,
     private videosService: VideosService,
     private tokenService: TokenService,
+    private usersService: UsersService,
   ) {
     this.reviewsService = reviewsService;
     this.videosService = videosService;
     this.tokenService = tokenService;
+    this.usersService = usersService;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -46,12 +49,19 @@ export class ReviewsController {
   async findThisVidReview(
     @Param('videoId') videoId: number,
     @Query('page') page: number,
-    @Request() req,
     @Headers() header,
   ): Promise<void> {
     let accessToken = null;
+    let myuser;
+
     if (header.authorization) {
-      accessToken = header.authorization.slice(7);
+      const rawAccessToken = header.authorization.slice(7);
+      accessToken = await this.tokenService.resolveAccessToken(rawAccessToken);
+      const { email } = accessToken;
+      const { iat } = accessToken;
+      const accessTokenIat = new Date(iat * 1000 + 1000);
+      myuser = await this.usersService.findUserWithEmail(email);
+      if (myuser.lastLogin > accessTokenIat) accessToken = null;
     }
 
     if (typeof Number(page) !== 'number' || Number(page) <= 0 || !page) {
@@ -60,17 +70,10 @@ export class ReviewsController {
       );
     }
 
-    const refreshToken = req.cookies.refreshToken;
     const video = await this.videosService.findVidWithId(videoId);
 
-    let myuser;
     if (!accessToken) {
       myuser = 'guest';
-    } else {
-      const { user } = await this.tokenService.resolveRefreshToken(
-        refreshToken,
-      );
-      myuser = user;
     }
 
     const {

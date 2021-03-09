@@ -16,17 +16,20 @@ exports.ReviewsController = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const token_service_1 = require("../auth/token.service");
+const users_service_1 = require("../users/users.service");
 const videos_service_1 = require("../videos/videos.service");
 const postReviewDto_1 = require("./dto/postReviewDto");
 const reviews_service_1 = require("./reviews.service");
 let ReviewsController = class ReviewsController {
-    constructor(reviewsService, videosService, tokenService) {
+    constructor(reviewsService, videosService, tokenService, usersService) {
         this.reviewsService = reviewsService;
         this.videosService = videosService;
         this.tokenService = tokenService;
+        this.usersService = usersService;
         this.reviewsService = reviewsService;
         this.videosService = videosService;
         this.tokenService = tokenService;
+        this.usersService = usersService;
     }
     async likeThisReview(body, req) {
         const user = req.user;
@@ -36,23 +39,25 @@ let ReviewsController = class ReviewsController {
         }
         return await this.reviewsService.addOrRemoveLike(user, review);
     }
-    async findThisVidReview(videoId, page, req, header) {
+    async findThisVidReview(videoId, page, header) {
         let accessToken = null;
+        let myuser;
         if (header.authorization) {
-            accessToken = header.authorization.slice(7);
+            const rawAccessToken = header.authorization.slice(7);
+            accessToken = await this.tokenService.resolveAccessToken(rawAccessToken);
+            const { email } = accessToken;
+            const { iat } = accessToken;
+            const accessTokenIat = new Date(iat * 1000 + 1000);
+            myuser = await this.usersService.findUserWithEmail(email);
+            if (myuser.lastLogin > accessTokenIat)
+                accessToken = null;
         }
         if (typeof Number(page) !== 'number' || Number(page) <= 0 || !page) {
             throw new common_1.NotFoundException('페이지를 입력받지 못했거나 숫자형태가 아니거나 0이하로 받았습니다.');
         }
-        const refreshToken = req.cookies.refreshToken;
         const video = await this.videosService.findVidWithId(videoId);
-        let myuser;
         if (!accessToken) {
             myuser = 'guest';
-        }
-        else {
-            const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
-            myuser = user;
         }
         const { videoList, userReview, } = await this.reviewsService.findThisVidAndUserReview(video, myuser);
         return Object.assign({
@@ -90,10 +95,9 @@ __decorate([
     common_1.Get(':videoId'),
     __param(0, common_1.Param('videoId')),
     __param(1, common_1.Query('page')),
-    __param(2, common_1.Request()),
-    __param(3, common_1.Headers()),
+    __param(2, common_1.Headers()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Object, Object]),
+    __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], ReviewsController.prototype, "findThisVidReview", null);
 __decorate([
@@ -124,7 +128,8 @@ ReviewsController = __decorate([
     common_1.Controller('reviews'),
     __metadata("design:paramtypes", [reviews_service_1.ReviewsService,
         videos_service_1.VideosService,
-        token_service_1.TokenService])
+        token_service_1.TokenService,
+        users_service_1.UsersService])
 ], ReviewsController);
 exports.ReviewsController = ReviewsController;
 //# sourceMappingURL=reviews.controller.js.map

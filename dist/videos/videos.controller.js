@@ -33,24 +33,32 @@ let VideosController = class VideosController {
     async test() {
         await this.videosService.saveDummyVideo();
     }
-    async getVideoList(path, q, req) {
+    async getVideoList(path, q, header) {
+        let accessToken = null;
+        let user = null;
+        if (header.authorization) {
+            const rawAccessToken = header.authorization.slice(7);
+            accessToken = await this.tokenService.resolveAccessToken(rawAccessToken);
+            const { email } = accessToken;
+            const { iat } = accessToken;
+            const accessTokenIat = new Date(iat * 1000 + 1000);
+            user = await this.usersService.findUserWithEmail(email);
+            if (user.lastLogin > accessTokenIat)
+                accessToken = null;
+        }
         if (path === 'myPage') {
-            const refreshToken = req.cookies.refreshToken;
-            if (!refreshToken) {
+            if (!accessToken) {
                 throw new common_1.UnauthorizedException('로그인 후 이용 가능합니다.');
             }
-            const { user } = await this.tokenService.resolveRefreshToken(req.cookies.refreshToken);
             const videoList = await this.videosService.getUserVideo(user.id);
             return Object.assign({
                 videoList: videoList,
             });
         }
         else if (path === 'aboutThis') {
-            const refreshToken = req.cookies.refreshToken;
-            if (!refreshToken) {
+            if (!accessToken) {
                 throw new common_1.UnauthorizedException('로그인 후 이용 가능합니다.');
             }
-            const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
             const userId = user.id;
             const videoList = await this.videosService.getUserVideo(userId);
             if (!videoList || videoList.length === 0) {
@@ -61,9 +69,9 @@ let VideosController = class VideosController {
                     videoBox.push(Object.assign(Object.assign({}, video), { rating: avgRating }));
                 }
                 videoBox.sort((a, b) => b.rating - a.rating);
-                const top5Vidbox = videoBox.slice(0, 5);
+                const top5Vidbox = videoBox.slice(0, 4);
                 return Object.assign({
-                    top5VideoList: top5Vidbox,
+                    videoList: top5Vidbox,
                     message: '유저의 리뷰가 없어서 메인페이지 top5 비디오리스트를 보냄',
                 });
             }
@@ -73,7 +81,7 @@ let VideosController = class VideosController {
             }
             const aboutThisVid = await this.videosService.getUserAboutThis(videoIds, userId);
             return Object.assign({
-                videoList: aboutThisVid,
+                videoList: aboutThisVid.slice(0, 4),
             });
         }
         else if (path === 'main') {
@@ -139,7 +147,7 @@ __decorate([
     common_1.Get('/videolist'),
     __param(0, common_1.Query('path')),
     __param(1, common_1.Query('q')),
-    __param(2, common_1.Request()),
+    __param(2, common_1.Headers()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)

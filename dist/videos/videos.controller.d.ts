@@ -9,7 +9,7 @@ export declare class VideosController {
     private tokenService;
     constructor(videosService: VideosService, reviewsService: ReviewsService, usersService: UsersService, tokenService: TokenService);
     test(): Promise<void>;
-    getVideoList(path: string, q: string, req: any): Promise<any>;
+    getVideoList(path: string, q: string, header: any): Promise<any>;
     getThisVideo(videoId: number): Promise<any>;
     addVideo(body: any, req: any): Promise<any>;
 }

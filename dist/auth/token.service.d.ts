@@ -12,6 +12,7 @@ export declare class TokenService {
     findTokenById(id: string): Promise<RefreshToken | null>;
     createRefreshToken(user: User): Promise<RefreshToken>;
     generateAccessToken(user: User): Promise<string>;
+    resolveAccessToken(encoded: string): Promise<any>;
     generateRefreshToken(user: User): Promise<string>;
     resolveRefreshToken(encoded: string): Promise<{
         user: User;
