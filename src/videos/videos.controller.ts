@@ -48,11 +48,13 @@ export class VideosController {
     if (header.authorization) {
       const rawAccessToken = header.authorization.slice(7);
       accessToken = await this.tokenService.resolveAccessToken(rawAccessToken);
-      const { email } = accessToken;
-      const { iat } = accessToken;
-      const accessTokenIat = new Date(iat * 1000 + 1000);
-      user = await this.usersService.findUserWithEmail(email);
-      if (user.lastLogin > accessTokenIat) accessToken = null;
+      if (accessToken) {
+        const { email } = accessToken;
+        const { iat } = accessToken;
+        const accessTokenIat = new Date(iat * 1000 + 1000);
+        user = await this.usersService.findUserWithEmail(email);
+        if (user.lastLogin > accessTokenIat) accessToken = null;
+      }
     }
 
     if (path === 'myPage') {

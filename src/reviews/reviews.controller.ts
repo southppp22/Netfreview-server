@@ -57,11 +57,13 @@ export class ReviewsController {
     if (header.authorization) {
       const rawAccessToken = header.authorization.slice(7);
       accessToken = await this.tokenService.resolveAccessToken(rawAccessToken);
-      const { email } = accessToken;
-      const { iat } = accessToken;
-      const accessTokenIat = new Date(iat * 1000 + 1000);
-      myuser = await this.usersService.findUserWithEmail(email);
-      if (myuser.lastLogin > accessTokenIat) accessToken = null;
+      if (accessToken) {
+        const { email } = accessToken;
+        const { iat } = accessToken;
+        const accessTokenIat = new Date(iat * 1000 + 1000);
+        myuser = await this.usersService.findUserWithEmail(email);
+        if (myuser.lastLogin > accessTokenIat) accessToken = null;
+      }
     }
 
     if (typeof Number(page) !== 'number' || Number(page) <= 0 || !page) {

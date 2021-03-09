@@ -62,11 +62,7 @@ export class TokenService {
         secret: process.env.ACCESS_TOKEN_SECRET,
       });
     } catch (e) {
-      if (e instanceof TokenExpiredError) {
-        throw new UnprocessableEntityException('Refresh token expired');
-      } else {
-        throw new UnprocessableEntityException('유효하지 않은 토큰입니다.');
-      }
+      return null;
     }
   }
 
