@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Headers,
   NotFoundException,
   Param,
@@ -48,8 +49,14 @@ export class ReviewsController {
     @Param('videoId') videoId: number,
     @Query('page') page: number,
     @Request() req,
+    @Headers() header,
   ): Promise<void> {
-    if (typeof Number(page) !== 'number' || page <= 0) {
+    let accessToken = null;
+    if (header.authorization) {
+      accessToken = header.authorization.slice(7);
+    }
+
+    if (typeof Number(page) !== 'number' || Number(page) <= 0 || !page) {
       throw new NotFoundException(
         '페이지를 입력받지 못했거나 숫자형태가 아니거나 0이하로 받았습니다.',
       );
@@ -59,7 +66,8 @@ export class ReviewsController {
     const video = await this.videosService.findVidWithId(videoId);
 
     let myuser;
-    if (!refreshToken) {
+    if (!accessToken) {
+      console.log('a');
       myuser = 'guest';
     } else {
       const { user } = await this.tokenService.resolveRefreshToken(

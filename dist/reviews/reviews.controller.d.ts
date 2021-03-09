@@ -8,7 +8,7 @@ export declare class ReviewsController {
     private tokenService;
     constructor(reviewsService: ReviewsService, videosService: VideosService, tokenService: TokenService);
     likeThisReview(body: any, req: any): Promise<any>;
-    findThisVidReview(videoId: number, page: number, req: any): Promise<void>;
+    findThisVidReview(videoId: number, page: number, req: any, header: any): Promise<void>;
     saveReview(body: ReviewDto, request: any): Promise<void>;
     deleteReview(body: any): Promise<void>;
     patchReview(body: ReviewDto, req: any): Promise<void>;

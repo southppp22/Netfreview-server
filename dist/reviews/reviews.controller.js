@@ -36,14 +36,19 @@ let ReviewsController = class ReviewsController {
         }
         return await this.reviewsService.addOrRemoveLike(user, review);
     }
-    async findThisVidReview(videoId, page, req) {
-        if (typeof Number(page) !== 'number' || page <= 0) {
+    async findThisVidReview(videoId, page, req, header) {
+        let accessToken = null;
+        if (header.authorization) {
+            accessToken = header.authorization.slice(7);
+        }
+        if (typeof Number(page) !== 'number' || Number(page) <= 0 || !page) {
             throw new common_1.NotFoundException('페이지를 입력받지 못했거나 숫자형태가 아니거나 0이하로 받았습니다.');
         }
         const refreshToken = req.cookies.refreshToken;
         const video = await this.videosService.findVidWithId(videoId);
         let myuser;
-        if (!refreshToken) {
+        if (!accessToken) {
+            console.log('a');
             myuser = 'guest';
         }
         else {
@@ -87,8 +92,9 @@ __decorate([
     __param(0, common_1.Param('videoId')),
     __param(1, common_1.Query('page')),
     __param(2, common_1.Request()),
+    __param(3, common_1.Headers()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:paramtypes", [Number, Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], ReviewsController.prototype, "findThisVidReview", null);
 __decorate([

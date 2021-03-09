@@ -74,7 +74,14 @@ export class UsersService {
       const [column, data] = entry;
       user[column] = data;
     }
-    await this.userRepository.save(user);
+    const password = await hash(user.password, 10);
+    console.log(user);
+    this.userRepository.save({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      password,
+    });
   }
 
   async generateRandomNickname(): Promise<string> {
