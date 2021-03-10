@@ -3307,7 +3307,7 @@
         "affectsGlobalScope": false
       },
       "../src/videos/videos.controller.ts": {
-        "version": "9e57da64581088e1366627ea31f30995fb73b0013ffbf0bf8c35252be6f9c808",
+        "version": "1e0995a642e382e82abf3bd73eff1aff6493c535fb9d45528fa7cfa697407bf1",
         "signature": "946c889d43092cb6141a56558df1716b0e429bb5d688f2824c7cea52899ddefc",
         "affectsGlobalScope": false
       },
@@ -3442,7 +3442,7 @@
         "affectsGlobalScope": false
       },
       "../src/users/users.controller.ts": {
-        "version": "f2afb5cd68e75450d40668af835a5f385dde6e7b5898c4bd1e7f85471d18e8a2",
+        "version": "7dbc855e3073252fc866aa0a80cc83173d76be1527e8c79ff604770ffdb9ddb4",
         "signature": "7a4688606aa1d46cb7accadf775448d1643d072dc0a0872932d4b1e2cd3df797",
         "affectsGlobalScope": false
       },

@@ -98,6 +98,11 @@ let VideosController = class VideosController {
             videoBox.sort((a, b) => b.reviews.length - a.reviews.length);
             const mostReviewVid = videoBox.slice(0, 5);
             const notMostReviewVid = videoBox.slice(videoBox.length - 5, videoBox.length);
+            [top5Vidbox, mostReviewVid, notMostReviewVid].forEach((el) => {
+                el.map((ele) => {
+                    delete ele.reviews;
+                });
+            });
             return Object.assign({
                 top5VideoList: top5Vidbox,
                 mostReviewVidList: mostReviewVid,

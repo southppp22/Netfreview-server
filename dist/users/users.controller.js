@@ -35,13 +35,19 @@ let UsersController = class UsersController {
         await this.usersService.updateLastLogin(user.id);
         const accessToken = await this.tokenService.generateAccessToken(user);
         const refreshToken = await this.tokenService.generateRefreshToken(user);
-        res.cookie('refreshToken', refreshToken, {});
+        res.cookie('refreshToken', refreshToken, {
+            domain: '',
+            path: '/',
+            secure: true,
+            sameSite: 'None',
+        });
         return {
             data: { accessToken },
             message: '로그인이 성공적으로 되었습니다.',
         };
     }
     async refresh(req) {
+        console.log(req.cookies);
         const { refreshToken } = req.cookies;
         const { token } = await this.tokenService.createAccessTokenFromRefreshToken(refreshToken);
         return {
@@ -79,7 +85,12 @@ let UsersController = class UsersController {
     async googleLoginCallback(req, res) {
         const { user, tokens: { accessToken, refreshToken }, } = req.user;
         await this.usersService.updateLastLogin(user.id);
-        res.cookie('refreshToken', refreshToken, {});
+        res.cookie('refreshToken', refreshToken, {
+            domain: 'localhost',
+            path: '/',
+            secure: true,
+            sameSite: 'None',
+        });
         return {
             data: { accessToken },
             message: '로그인이 성공적으로 되었습니다.',
