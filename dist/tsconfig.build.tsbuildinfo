@@ -3237,8 +3237,8 @@
         "affectsGlobalScope": false
       },
       "../src/reviews/reviews.service.ts": {
-        "version": "8fc5aab75b79ba4eb00e4baa3f66f796047a99389c45ebcf3a130dcfed8c9d4b",
-        "signature": "3a31a574ce0bfd6d7cc1bb166e1b4d86bb5c900b7137b390ebe8b62a95b2432a",
+        "version": "84a3468e3e3048e377b51481bbe176ae19847b706d8d27d3c08734b79259f6a4",
+        "signature": "41a622b04dae6f2aad81534234576fe34d36115eda90e0719651b1bfbca07d99",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/bcrypt/index.d.ts": {
@@ -3522,7 +3522,7 @@
         "affectsGlobalScope": false
       },
       "../src/reviews/reviews.controller.ts": {
-        "version": "33e7c7ecd40578971805797b30d3dde370594f8c520c9f25b6776eb2e632b366",
+        "version": "ba9dfa86284edb9b7e2e08799a69e0855b4600953026af67c62cbc0049c2419c",
         "signature": "291806c4eedf1f8a77bb4184c814c88e5dc4cf77f0afc3d997e53d270f76e582",
         "affectsGlobalScope": false
       },

@@ -31,5 +31,5 @@ export declare class ReviewsService {
     }>;
     saveReview(user: User, video: Video, req: ReviewDto): Promise<any>;
     deleteReview(id: number): Promise<void>;
-    patchReview(user: User, video: Video, req: ReviewDto): Promise<void>;
+    patchReview(user: User, video: Video, req: ReviewDto): Promise<any>;
 }

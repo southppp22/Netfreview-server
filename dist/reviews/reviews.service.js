@@ -51,6 +51,7 @@ let ReviewsService = class ReviewsService {
         if (userLike) {
             await this.likeRepository.delete({ user, review });
             return Object.assign({
+                review,
                 message: 'Success deleted',
             });
         }
@@ -60,6 +61,7 @@ let ReviewsService = class ReviewsService {
             likeReview.review = review;
             await this.likeRepository.save(likeReview);
             return Object.assign({
+                review,
                 message: 'Success created',
             });
         }
@@ -112,7 +114,9 @@ let ReviewsService = class ReviewsService {
             reviews.user = user;
             reviews.video = video;
             await this.reviewRepository.save(reviews);
+            delete reviews.user;
             return Object.assign({
+                review: reviews,
                 message: '리뷰가 등록되었습니다.',
             });
         }
@@ -124,12 +128,18 @@ let ReviewsService = class ReviewsService {
         const review = await this.reviewRepository.findOne({ user, video });
         const id = review.id;
         await this.deleteReview(id);
-        await this.reviewRepository.save({
+        const thisreview = {
             id,
             text: req.text,
             rating: req.rating,
             user,
             video,
+        };
+        await this.reviewRepository.save(thisreview);
+        delete thisreview.user;
+        return Object.assign({
+            review: thisreview,
+            message: '리뷰가 등록되었습니다.',
         });
     }
 };

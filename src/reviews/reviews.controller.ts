@@ -118,6 +118,6 @@ export class ReviewsController {
   async patchReview(@Body() body: ReviewDto, @Request() req): Promise<void> {
     const user = req.user;
     const video = await this.videosService.findVidWithId(body.videoId);
-    await this.reviewsService.patchReview(user, video, body);
+    return await this.reviewsService.patchReview(user, video, body);
   }
 }
