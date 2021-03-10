@@ -117,7 +117,7 @@ export class UsersController {
     return;
   }
 
-  @Get('redirect')
+  @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   async googleLoginCallback(
     @Request() req,
@@ -125,22 +125,18 @@ export class UsersController {
   ): Promise<ResponseWithToken> {
     const {
       user,
-      tokens: { accessToken, refreshToken },
+      tokens: { refreshToken },
     } = req.user;
     await this.usersService.updateLastLogin(user.id);
 
     res.cookie('refreshToken', refreshToken, {
-      domain: 'localhost',
+      domain: '',
       path: '/',
       secure: true,
       // httpOnly: true,
       sameSite: 'None',
     });
-
-    return {
-      data: { accessToken },
-      message: '로그인이 성공적으로 되었습니다.',
-    };
+    return res.redirect('http://localhost:3000'); // 배포후에는 https://netfreview.com
   }
 
   @Post('pw-find')
