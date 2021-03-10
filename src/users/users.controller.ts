@@ -42,11 +42,11 @@ export class UsersController {
     const refreshToken = await this.tokenService.generateRefreshToken(user);
 
     res.cookie('refreshToken', refreshToken, {
-      // domain: 'gettoday4.click',
-      // path: '/',
-      // secure: true,
+      domain: '',
+      path: '/',
+      secure: true,
       // httpOnly: true,
-      // sameSite: 'None',
+      sameSite: 'None',
     });
 
     return {
@@ -57,6 +57,7 @@ export class UsersController {
 
   @Get('refresh')
   async refresh(@Request() req: any): Promise<ResponseWithToken> {
+    console.log(req.cookies);
     const { refreshToken } = req.cookies;
     const { token } = await this.tokenService.createAccessTokenFromRefreshToken(
       refreshToken,
@@ -80,13 +81,10 @@ export class UsersController {
     @Request() req,
     @Response({ passthrough: true }) res,
   ): Promise<string> {
-    const { refreshToken } = req.cookies;
-    const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
+    const { user } = req;
     res.clearCookie('refreshToken');
-
     await this.tokenService.deleteRefreshTokenFromUser(user);
     await this.usersService.updateLastLogin(user.id);
-
     return '로그아웃 되었습니다.';
   }
 
@@ -132,11 +130,11 @@ export class UsersController {
     await this.usersService.updateLastLogin(user.id);
 
     res.cookie('refreshToken', refreshToken, {
-      // domain: 'gettoday4.click',
-      // path: '/',
-      // secure: true,
+      domain: 'localhost',
+      path: '/',
+      secure: true,
       // httpOnly: true,
-      // sameSite: 'None',
+      sameSite: 'None',
     });
 
     return {

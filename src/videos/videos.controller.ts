@@ -125,6 +125,11 @@ export class VideosController {
         videoBox.length,
       );
       //리뷰없는거 5개, 최다리뷰 5개
+      [top5Vidbox, mostReviewVid, notMostReviewVid].forEach((el) => {
+        el.map((ele) => {
+          delete ele.reviews;
+        });
+      });
 
       return Object.assign({
         top5VideoList: top5Vidbox,
