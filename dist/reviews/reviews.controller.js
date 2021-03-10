@@ -62,8 +62,12 @@ let ReviewsController = class ReviewsController {
             myuser = 'guest';
         }
         const { videoList, userReview, } = await this.reviewsService.findThisVidAndUserReview(video, myuser);
+        let totalCount = videoList.length;
+        if (userReview) {
+            totalCount++;
+        }
         return Object.assign({
-            totalCount: videoList.length,
+            totalCount,
             reviewList: videoList.slice(8 * (page - 1), 8 * page),
             myReview: userReview,
         });

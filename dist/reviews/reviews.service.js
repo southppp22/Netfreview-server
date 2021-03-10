@@ -75,6 +75,7 @@ let ReviewsService = class ReviewsService {
             .createQueryBuilder('review')
             .leftJoinAndSelect('review.user', 'user')
             .where({ video })
+            .andWhere('user.id != :id', { id: user.id })
             .getMany();
         const videoList = [];
         if (rawVideoList.length) {
