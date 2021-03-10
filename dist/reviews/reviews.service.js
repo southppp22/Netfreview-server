@@ -50,8 +50,14 @@ let ReviewsService = class ReviewsService {
         const userLike = await this.likeRepository.findOne({ user, review });
         if (userLike) {
             await this.likeRepository.delete({ user, review });
-            return Object.assign({
+            const likeCount = await this.likeRepository.count({ review });
+            const isLike = await this.likeRepository.count({
+                user,
                 review,
+            });
+            const returnReview = Object.assign(Object.assign({}, review), { likeCount, isLike });
+            return Object.assign({
+                review: returnReview,
                 message: 'Success deleted',
             });
         }
@@ -60,14 +66,24 @@ let ReviewsService = class ReviewsService {
             likeReview.user = user;
             likeReview.review = review;
             await this.likeRepository.save(likeReview);
-            return Object.assign({
+            const likeCount = await this.likeRepository.count({ review });
+            const isLike = await this.likeRepository.count({
+                user,
                 review,
+            });
+            const returnReview = Object.assign(Object.assign({}, review), { likeCount, isLike });
+            return Object.assign({
+                review: returnReview,
                 message: 'Success created',
             });
         }
     }
     async findReviewWithId(reviewId) {
-        return await this.reviewRepository.findOne({ id: reviewId });
+        return await this.reviewRepository
+            .createQueryBuilder('review')
+            .where('review.id = :id', { id: reviewId })
+            .leftJoinAndSelect('review.user', 'user')
+            .getOne();
     }
     async findThisVidAndUserReview(video, user) {
         if (user === 'guest') {
@@ -115,8 +131,10 @@ let ReviewsService = class ReviewsService {
             reviews.video = video;
             await this.reviewRepository.save(reviews);
             delete reviews.user;
+            delete reviews.video;
+            const returnReview = Object.assign(Object.assign({}, reviews), { likeCount: 0, isLike: 0 });
             return Object.assign({
-                review: reviews,
+                myReview: returnReview,
                 message: '리뷰가 등록되었습니다.',
             });
         }
@@ -127,6 +145,11 @@ let ReviewsService = class ReviewsService {
     async patchReview(user, video, req) {
         const review = await this.reviewRepository.findOne({ user, video });
         const id = review.id;
+        const likeCount = await this.likeRepository.count({ review });
+        const isLike = await this.likeRepository.count({
+            user,
+            review,
+        });
         await this.deleteReview(id);
         const thisreview = {
             id,
@@ -137,8 +160,10 @@ let ReviewsService = class ReviewsService {
         };
         await this.reviewRepository.save(thisreview);
         delete thisreview.user;
+        delete thisreview.video;
         return Object.assign({
-            review: thisreview,
+            myReview: Object.assign(Object.assign({}, thisreview), { likeCount,
+                isLike }),
             message: '리뷰가 등록되었습니다.',
         });
     }
