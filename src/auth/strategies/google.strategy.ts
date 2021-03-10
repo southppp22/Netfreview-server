@@ -9,19 +9,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'https://www.gettoday4.click/users/redirect',
-      passReqToCallback: true,
+      callbackURL: 'https://www.gettoday4.click/users/google/redirect',
       scope: ['profile', 'email'],
     });
   }
 
   async validate(
-    request: any,
     accessToken: string,
     refreshToken: string,
     profile: any,
-    done: VerifyCallback,
-  ) {
+  ): Promise<any> {
     const { displayName, emails, photos, id } = profile;
     const userProfile = {
       id: id,
@@ -29,6 +26,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       email: emails[0].value,
       profileUrl: photos[0].value,
     };
-    return await this.authService.validateOAuthLogin(userProfile, 'google');
+    const { user, tokens } = await this.authService.validateOAuthLogin(
+      userProfile,
+      'google',
+    );
+    return { user, tokens };
   }
 }

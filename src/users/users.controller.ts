@@ -42,11 +42,11 @@ export class UsersController {
     const refreshToken = await this.tokenService.generateRefreshToken(user);
 
     res.cookie('refreshToken', refreshToken, {
-      // domain: 'gettoday4.click',
-      // path: '/',
-      // secure: true,
+      domain: '',
+      path: '/',
+      secure: true,
       // httpOnly: true,
-      // sameSite: 'None',
+      sameSite: 'None',
     });
 
     return {
@@ -82,6 +82,7 @@ export class UsersController {
   ): Promise<string> {
     const { refreshToken } = req.cookies;
     const { user } = await this.tokenService.resolveRefreshToken(refreshToken);
+
     res.clearCookie('refreshToken');
 
     await this.tokenService.deleteRefreshTokenFromUser(user);
@@ -119,7 +120,7 @@ export class UsersController {
     return;
   }
 
-  @Get('redirect')
+  @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   async googleLoginCallback(
     @Request() req,
@@ -127,22 +128,18 @@ export class UsersController {
   ): Promise<ResponseWithToken> {
     const {
       user,
-      tokens: { accessToken, refreshToken },
+      tokens: { refreshToken },
     } = req.user;
     await this.usersService.updateLastLogin(user.id);
 
     res.cookie('refreshToken', refreshToken, {
-      // domain: 'gettoday4.click',
-      // path: '/',
-      // secure: true,
+      domain: '',
+      path: '/',
+      secure: true,
       // httpOnly: true,
-      // sameSite: 'None',
+      sameSite: 'None',
     });
-
-    return {
-      data: { accessToken },
-      message: '로그인이 성공적으로 되었습니다.',
-    };
+    return res.redirect('http://localhost:3000'); // 배포후에는 https://netfreview.com
   }
 
   @Post('pw-find')
