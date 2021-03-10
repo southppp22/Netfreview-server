@@ -112,8 +112,13 @@ let VideosController = class VideosController {
         }
         if (q) {
             const allVideolist = await this.videosService.getSearchVideo(q);
+            const videoList = [];
+            for (const video of allVideolist) {
+                const rating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
+                videoList.push(Object.assign(Object.assign({}, video), { rating }));
+            }
             return Object.assign({
-                videoList: allVideolist,
+                videoList,
             });
         }
         else {
