@@ -31,7 +31,8 @@ export class ReviewsService {
       .select('AVG(review.rating)', 'avg')
       .getRawOne();
 
-    return avgRating.avg;
+    if (avgRating === null) return 0;
+    else return Number(avgRating.avg);
 
     // const thisVideo = await this.videoRepository.findOne({ id: videoId });
     // const thisVidReviewList = await this.reviewRepository.find({

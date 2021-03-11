@@ -52,7 +52,7 @@ let VideosController = class VideosController {
             const videoList = await this.videosService.getUserVideo(user.id);
             const myPageVideoList = [];
             for (const video of videoList) {
-                const avgRating = (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
                 myPageVideoList.push(Object.assign(Object.assign({}, video), { rating: avgRating }));
             }
             return Object.assign({
@@ -70,7 +70,7 @@ let VideosController = class VideosController {
                 const top5ReviewVidBox = [];
                 for (const video of videoList3) {
                     const topVid = await this.videosService.getThisVideoWithId(video.id);
-                    const avgRating = (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
+                    const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
                     top5ReviewVidBox.push(Object.assign(Object.assign({}, topVid), { rating: avgRating }));
                 }
                 return Object.assign({
@@ -92,23 +92,21 @@ let VideosController = class VideosController {
             const many5ReviewVidBox = [];
             for (const video of videoList) {
                 const manyVid = await this.videosService.getThisVideoWithId(video.video_id);
-                const avgRating = (await this.reviewsService.getThisVidReviewAvgRate(video.video_id)) ||
-                    0;
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.video_id);
                 many5ReviewVidBox.push(Object.assign(Object.assign({}, manyVid), { rating: avgRating }));
             }
             const videoList2 = await this.videosService.getLessReviewVid();
             const less5ReviewVidBox = [];
             for (const video of videoList2) {
                 const lowVid = await this.videosService.getThisVideoWithId(video.video_id);
-                const avgRating = (await this.reviewsService.getThisVidReviewAvgRate(video.video_id)) ||
-                    0;
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.video_id);
                 less5ReviewVidBox.push(Object.assign(Object.assign({}, lowVid), { rating: avgRating }));
             }
             const videoList3 = await this.videosService.getTop5ReviewVid();
             const top5ReviewVidBox = [];
             for (const video of videoList3) {
                 const topVid = await this.videosService.getThisVideoWithId(video.id);
-                const avgRating = (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
                 top5ReviewVidBox.push(Object.assign(Object.assign({}, topVid), { rating: avgRating }));
             }
             return Object.assign({
@@ -122,7 +120,7 @@ let VideosController = class VideosController {
             const allVideolist = await this.videosService.getSearchVideo(q);
             const videoList = [];
             for (const video of allVideolist) {
-                const rating = (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
+                const rating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
                 videoList.push(Object.assign(Object.assign({}, video), { rating }));
             }
             return Object.assign({
@@ -135,7 +133,7 @@ let VideosController = class VideosController {
     }
     async getThisVideo(videoId) {
         const rawVideoData = await this.videosService.findVidWithId(videoId);
-        const avgRating = (await this.reviewsService.getThisVidReviewAvgRate(videoId)) || 0;
+        const avgRating = await this.reviewsService.getThisVidReviewAvgRate(videoId);
         if (!rawVideoData)
             throw new common_1.BadRequestException('해당 비디오가 없습니다.');
         const genres = await this.videosService.getThisVidGenreWithId(videoId);
