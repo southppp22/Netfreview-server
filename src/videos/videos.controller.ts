@@ -59,9 +59,8 @@ export class VideosController {
       const videoList = await this.videosService.getUserVideo(user.id);
       const myPageVideoList = [];
       for (const video of videoList) {
-        const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
-          video.id,
-        );
+        const avgRating =
+          (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
         myPageVideoList.push({
           ...video,
           rating: avgRating,
@@ -82,9 +81,8 @@ export class VideosController {
         const top5ReviewVidBox = [];
         for (const video of videoList3) {
           const topVid = await this.videosService.getThisVideoWithId(video.id);
-          const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
-            video.id,
-          );
+          const avgRating =
+            (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
           top5ReviewVidBox.push({
             ...topVid,
             rating: avgRating,
@@ -137,9 +135,9 @@ export class VideosController {
         const manyVid = await this.videosService.getThisVideoWithId(
           video.video_id,
         );
-        const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
-          video.video_id,
-        );
+        const avgRating =
+          (await this.reviewsService.getThisVidReviewAvgRate(video.video_id)) ||
+          0;
         many5ReviewVidBox.push({
           ...manyVid,
           rating: avgRating,
@@ -152,9 +150,9 @@ export class VideosController {
         const lowVid = await this.videosService.getThisVideoWithId(
           video.video_id,
         );
-        const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
-          video.video_id,
-        );
+        const avgRating =
+          (await this.reviewsService.getThisVidReviewAvgRate(video.video_id)) ||
+          0;
         less5ReviewVidBox.push({
           ...lowVid,
           rating: avgRating,
@@ -164,9 +162,8 @@ export class VideosController {
       const top5ReviewVidBox = [];
       for (const video of videoList3) {
         const topVid = await this.videosService.getThisVideoWithId(video.id);
-        const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
-          video.id,
-        );
+        const avgRating =
+          (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
         top5ReviewVidBox.push({
           ...topVid,
           rating: avgRating,
@@ -185,9 +182,8 @@ export class VideosController {
       const allVideolist = await this.videosService.getSearchVideo(q);
       const videoList = [];
       for (const video of allVideolist) {
-        const rating = await this.reviewsService.getThisVidReviewAvgRate(
-          video.id,
-        );
+        const rating =
+          (await this.reviewsService.getThisVidReviewAvgRate(video.id)) || 0;
         videoList.push({ ...video, rating });
       }
       return Object.assign({
@@ -203,9 +199,8 @@ export class VideosController {
   @Get(':videoId')
   async getThisVideo(@Param('videoId') videoId: number) {
     const rawVideoData = await this.videosService.findVidWithId(videoId);
-    const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
-      videoId,
-    );
+    const avgRating =
+      (await this.reviewsService.getThisVidReviewAvgRate(videoId)) || 0;
     if (!rawVideoData) throw new BadRequestException('해당 비디오가 없습니다.');
 
     const genres = await this.videosService.getThisVidGenreWithId(videoId);
