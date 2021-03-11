@@ -56,6 +56,16 @@ export class TokenService {
     return this.jwtService.sign(payload, opts);
   }
 
+  async generateTemporaryAccessToken(user: User): Promise<string> {
+    const payload = { email: user.email, sub: user.id };
+
+    const opts = {
+      secret: process.env.ACCESS_TOKEN_SECRET,
+      expiresIn: '3m',
+    };
+    return this.jwtService.sign(payload, opts);
+  }
+
   async resolveAccessToken(encoded: string) {
     try {
       return this.jwtService.verify(encoded, {

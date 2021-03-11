@@ -2892,8 +2892,8 @@
         "affectsGlobalScope": true
       },
       "../src/videos/videos.service.ts": {
-        "version": "1bce9f74de906316ff92a91450581f7300885e1e74580044e61f8b48df0154ac",
-        "signature": "06896cda22f1bc7cf5d1df2c846412bd59ee12fae2d39dcbb4e4e76c7ee94bbc",
+        "version": "cf4ef7e7b2a791c3e97a4267f7e05825f136ab1af1acc7cf4e6a5190135d0b3e",
+        "signature": "0ae28ac75c269932eaba3b24288129080695639d7948d542a57e02ac2f0dae10",
         "affectsGlobalScope": false
       },
       "../node_modules/@nestjs/passport/dist/abstract.strategy.d.ts": {
@@ -3237,8 +3237,8 @@
         "affectsGlobalScope": false
       },
       "../src/reviews/reviews.service.ts": {
-        "version": "890912e564917dda2207bc16bcb7af00bf2a843e1937a43db3f8b6ea6718e85e",
-        "signature": "41a622b04dae6f2aad81534234576fe34d36115eda90e0719651b1bfbca07d99",
+        "version": "5750b0e37de35207b4f39f23bb574ad0ee0aab1e61f469110e706b24103ee8f7",
+        "signature": "88be776781db46f3114ce9fa126c1987e8433aeb81a932c04f9cfa1742976d97",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/bcrypt/index.d.ts": {
@@ -3302,13 +3302,13 @@
         "affectsGlobalScope": false
       },
       "../src/auth/token.service.ts": {
-        "version": "235926f76a9ed3a12f916c9060a9dd8888dae543dd51768a0af0efa669010e46",
-        "signature": "9b4bbcdeabcc43a69b72002844372c6d0223c6d41c68b4f8940320c4f44026a8",
+        "version": "7ef92221c576a60a29abb69c8e187551bda330b06445bd6b0b6f13b0cc473254",
+        "signature": "18bb00e321a527ccf12d13b9b8db71fb7ed86a19ed959f97f379657a65b16224",
         "affectsGlobalScope": false
       },
       "../src/videos/videos.controller.ts": {
-        "version": "6178a13b68b89b8c640def50ebab50a2959ab9ac2ad57a8a3434be31e66c6042",
-        "signature": "946c889d43092cb6141a56558df1716b0e429bb5d688f2824c7cea52899ddefc",
+        "version": "2b72ca2bdabd792acd664e71b8f24b8a5de76da844f089105dd1bf6879772dcb",
+        "signature": "037a7ad02f68915dd673e57c0b8f0a9baf3a8efc2162a27a97c3791eb1a6ed9e",
         "affectsGlobalScope": false
       },
       "../node_modules/@nestjs/config/dist/interfaces/config-factory.interface.d.ts": {
@@ -3422,7 +3422,7 @@
         "affectsGlobalScope": false
       },
       "../src/mail/mail.service.ts": {
-        "version": "6a859e5536d5704250d786bc4e741020222ed7338a3a56940000b3b2945a7d4c",
+        "version": "a59367136705046805dbc1ce4477f605de370512377822e6849daf9062b5c9cd",
         "signature": "0ff1f56912dcad3c85221123c53efeb8cf0faf6b88637c38ed083f1182126776",
         "affectsGlobalScope": false
       },

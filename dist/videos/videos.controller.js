@@ -30,9 +30,6 @@ let VideosController = class VideosController {
         this.usersService = usersService;
         this.tokenService = tokenService;
     }
-    async test() {
-        await this.videosService.saveDummyVideo();
-    }
     async getVideoList(path, q, header) {
         let accessToken = null;
         let user = null;
@@ -64,16 +61,15 @@ let VideosController = class VideosController {
             const userId = user.id;
             const videoList = await this.videosService.getUserVideo(userId);
             if (!videoList || videoList.length === 0) {
-                const videoList2 = await this.videosService.getAllVideoWithReview();
-                const videoBox = [];
-                for (const video of videoList2) {
+                const videoList3 = await this.videosService.getTop5ReviewVid();
+                const top5ReviewVidBox = [];
+                for (const video of videoList3) {
+                    const topVid = await this.videosService.getThisVideoWithId(video.id);
                     const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
-                    videoBox.push(Object.assign(Object.assign({}, video), { rating: avgRating }));
+                    top5ReviewVidBox.push(Object.assign(Object.assign({}, topVid), { rating: avgRating }));
                 }
-                videoBox.sort((a, b) => b.rating - a.rating);
-                const top5Vidbox = videoBox.slice(0, 4);
                 return Object.assign({
-                    videoList: top5Vidbox,
+                    videoList: top5ReviewVidBox,
                     message: '유저의 리뷰가 없어서 메인페이지 top5 비디오리스트를 보냄',
                 });
             }
@@ -87,26 +83,31 @@ let VideosController = class VideosController {
             });
         }
         else if (path === 'main') {
-            const videoList = await this.videosService.getAllVideoWithReview();
-            const videoBox = [];
+            const videoList = await this.videosService.getManyReviewVid();
+            const many5ReviewVidBox = [];
             for (const video of videoList) {
-                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
-                videoBox.push(Object.assign(Object.assign({}, video), { rating: avgRating }));
+                const manyVid = await this.videosService.getThisVideoWithId(video.video_id);
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.video_id);
+                many5ReviewVidBox.push(Object.assign(Object.assign({}, manyVid), { rating: avgRating }));
             }
-            videoBox.sort((a, b) => b.rating - a.rating);
-            const top5Vidbox = videoBox.slice(0, 5);
-            videoBox.sort((a, b) => b.reviews.length - a.reviews.length);
-            const mostReviewVid = videoBox.slice(0, 5);
-            const notMostReviewVid = videoBox.slice(videoBox.length - 5, videoBox.length);
-            [top5Vidbox, mostReviewVid, notMostReviewVid].forEach((el) => {
-                el.map((ele) => {
-                    delete ele.reviews;
-                });
-            });
+            const videoList2 = await this.videosService.getLessReviewVid();
+            const less5ReviewVidBox = [];
+            for (const video of videoList2) {
+                const lowVid = await this.videosService.getThisVideoWithId(video.video_id);
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.video_id);
+                less5ReviewVidBox.push(Object.assign(Object.assign({}, lowVid), { rating: avgRating }));
+            }
+            const videoList3 = await this.videosService.getTop5ReviewVid();
+            const top5ReviewVidBox = [];
+            for (const video of videoList3) {
+                const topVid = await this.videosService.getThisVideoWithId(video.id);
+                const avgRating = await this.reviewsService.getThisVidReviewAvgRate(video.id);
+                top5ReviewVidBox.push(Object.assign(Object.assign({}, topVid), { rating: avgRating }));
+            }
             return Object.assign({
-                top5VideoList: top5Vidbox,
-                mostReviewVidList: mostReviewVid,
-                lessReviewVidList: notMostReviewVid,
+                top5VideoList: top5ReviewVidBox,
+                mostReviewVidList: many5ReviewVidBox,
+                lessReviewVidList: less5ReviewVidBox,
                 message: '메인페이지 비디오 리스트 모음',
             });
         }
@@ -149,12 +150,6 @@ let VideosController = class VideosController {
         }
     }
 };
-__decorate([
-    common_1.Post('/test'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], VideosController.prototype, "test", null);
 __decorate([
     common_1.Get('/videolist'),
     __param(0, common_1.Query('path')),

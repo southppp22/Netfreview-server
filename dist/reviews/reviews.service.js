@@ -32,19 +32,13 @@ let ReviewsService = class ReviewsService {
         this.videoRepository = videoRepository;
     }
     async getThisVidReviewAvgRate(videoId) {
-        const thisVideo = await this.videoRepository.findOne({ id: videoId });
-        const thisVidReviewList = await this.reviewRepository.find({
-            video: thisVideo,
-        });
-        if (thisVidReviewList.length === 0) {
-            return 0;
-        }
-        const count = thisVidReviewList.length;
-        let sum = 0;
-        thisVidReviewList.map((review) => {
-            sum += review.rating;
-        });
-        return sum / count;
+        const avgRating = await this.reviewRepository
+            .createQueryBuilder('review')
+            .leftJoinAndSelect('review.video', 'video')
+            .where('video.id = :videoId', { videoId })
+            .select('AVG(review.rating)', 'avg')
+            .getRawOne();
+        return avgRating.avg;
     }
     async addOrRemoveLike(user, review) {
         const userLike = await this.likeRepository.findOne({ user, review });
