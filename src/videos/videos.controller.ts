@@ -56,10 +56,19 @@ export class VideosController {
       if (!accessToken) {
         throw new UnauthorizedException('로그인 후 이용 가능합니다.');
       }
-
       const videoList = await this.videosService.getUserVideo(user.id);
+      const myPageVideoList = [];
+      for (const video of videoList) {
+        const avgRating = await this.reviewsService.getThisVidReviewAvgRate(
+          video.id,
+        );
+        myPageVideoList.push({
+          ...video,
+          rating: avgRating,
+        });
+      }
       return Object.assign({
-        videoList: videoList,
+        videoList: myPageVideoList,
       });
     } else if (path === 'aboutThis') {
       if (!accessToken) {

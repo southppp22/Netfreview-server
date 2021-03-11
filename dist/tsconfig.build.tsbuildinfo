@@ -3307,7 +3307,7 @@
         "affectsGlobalScope": false
       },
       "../src/videos/videos.controller.ts": {
-        "version": "2b72ca2bdabd792acd664e71b8f24b8a5de76da844f089105dd1bf6879772dcb",
+        "version": "184b1eceacf0e46fb2b12062ca8a470652cfce8449edcbba828666ebb150de1e",
         "signature": "037a7ad02f68915dd673e57c0b8f0a9baf3a8efc2162a27a97c3791eb1a6ed9e",
         "affectsGlobalScope": false
       },
