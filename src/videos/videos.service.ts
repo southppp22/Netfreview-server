@@ -59,6 +59,10 @@ export class VideosService {
     });
   }
 
+  async getThisVideoWithId(videoId) {
+    return this.videoRepository.findOne({ id: videoId });
+  }
+
   async getThisVidGenreWithId(videoId: number) {
     const video = await this.videoRepository
       .createQueryBuilder('video')
@@ -79,6 +83,7 @@ export class VideosService {
     const myVideoBox = [];
     for (const review of reviews) {
       if (review.user.id === userId) {
+        delete review.user;
         myVideoBox.push(review.video);
       }
     }
@@ -188,11 +193,66 @@ export class VideosService {
       .getMany();
   }
 
+  async getAllVideoId() {
+    const videoIdList = await this.videoRepository
+      .createQueryBuilder('video')
+      // .select()
+      .select('video.id')
+      .getMany();
+
+    return videoIdList;
+  }
+
   async saveDummyVideo() {
     for (const video of videoData.data) {
       await this.addThisVideo(video);
     }
 
     return 'success ADD!';
+  }
+
+  async getManyReviewVid() {
+    const videoList = await this.videoRepository
+      .createQueryBuilder('video')
+      .select('video.id')
+      .leftJoin('video.reviews', 'review')
+      .addSelect(`COUNT('reviews')`, 'count')
+      .groupBy('video.id')
+      .orderBy('count', 'DESC')
+      .limit(5)
+      .getRawMany();
+
+    return videoList;
+  }
+
+  async getLessReviewVid() {
+    const videoList = await this.videoRepository
+      .createQueryBuilder('video')
+      .select('video')
+      .leftJoin('video.reviews', 'review')
+      .addSelect(`COUNT('reviews')`, 'count')
+      .groupBy('video.id')
+      .orderBy('count')
+      .limit(5)
+      .getRawMany();
+
+    return videoList;
+  }
+
+  async getTop5ReviewVid() {
+    const videoList = await this.videoRepository
+      .createQueryBuilder('video')
+      .select('video.id')
+      .addSelect('AVG(rating)', 'rating')
+      .where('videoId = video.id')
+      .from(Review, 'reviews')
+      .groupBy('video.id')
+      .orderBy('rating', 'DESC')
+      .limit(5)
+      .getRawMany();
+
+    return videoList;
+
+    // return videoList;
   }
 }
