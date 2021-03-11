@@ -76,7 +76,7 @@ let UsersService = class UsersService {
             }
             user[column] = data;
         }
-        this.userRepository.save({
+        const modifyUser = {
             id: user.id,
             email: user.email,
             name: user.name,
@@ -84,7 +84,10 @@ let UsersService = class UsersService {
             profileUrl: user.profileUrl,
             introduction: user.introduction,
             nickname: user.nickname,
-        });
+        };
+        this.userRepository.save(modifyUser);
+        delete modifyUser.password;
+        return modifyUser;
     }
     async generateRandomNickname() {
         let nickname = string_util_1.createRandomString(10);

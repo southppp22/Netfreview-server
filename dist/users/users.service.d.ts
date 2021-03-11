@@ -12,6 +12,6 @@ export declare class UsersService {
     updateLastLogin(id: string): Promise<void>;
     saveUser(user: User, provider?: string): Promise<User>;
     deleteUser(id: string): Promise<void>;
-    updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<void>;
+    updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<any>;
     generateRandomNickname(): Promise<string>;
 }

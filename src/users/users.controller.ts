@@ -107,8 +107,11 @@ export class UsersController {
   @Patch()
   async updateUserInfo(@Request() req, @Body() payload): Promise<string> {
     const { user } = req;
-    await this.usersService.updateUserInfo(user, payload);
-    return '회원정보가 수정되었습니다.';
+    const userinfo = await this.usersService.updateUserInfo(user, payload);
+    return Object.assign({
+      user : userinfo,
+      message : '회원정보가 수정되었습니다.'
+    });
   }
 
   @Get('google')
