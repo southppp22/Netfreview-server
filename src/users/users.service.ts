@@ -67,7 +67,7 @@ export class UsersService {
     await this.userRepository.delete({ id });
   }
 
-  async updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<void> {
+  async updateUserInfo(user: User, dto: UpdateUserInfoDto): Promise<any> {
     const entries = Object.entries(dto);
     let password;
 
@@ -78,7 +78,7 @@ export class UsersService {
       }
       user[column] = data;
     }
-    this.userRepository.save({
+    const modifyUser = {
       id: user.id,
       email: user.email,
       name: user.name,
@@ -86,7 +86,11 @@ export class UsersService {
       profileUrl: user.profileUrl,
       introduction: user.introduction,
       nickname: user.nickname,
-    });
+    };
+
+    this.userRepository.save(modifyUser);
+    delete modifyUser.password;
+    return modifyUser;
   }
 
   async generateRandomNickname(): Promise<string> {
